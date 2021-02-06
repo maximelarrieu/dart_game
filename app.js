@@ -34,6 +34,8 @@ const getNbPlayers = () => {
                 const troiscentun = new trois_cent_un()
                 console.log("301:" + troiscentun.nbDarts)
                 console.log(trois_cent_un.getNbPlayers)
+                console.log("Les "+ answer.number_players + " joueurs possèdent un score de " + troiscentun.score + " et "+ troiscentun.nbDarts +" fléchettes chacun")
+                console.log(trois_cent_un.startGame)
             }
         })
         .catch(error => {
