@@ -30,12 +30,14 @@ const getNbPlayers = () => {
             } else {
                 console.log(`Nombre de joueurs : ${answer.number_players}`)
                 GameMode.getNbPlayers(answer.number_players)
-                console.log(GameMode.nbPlayers)
-                const troiscentun = new trois_cent_un()
-                console.log("301:" + troiscentun.nbDarts)
-                console.log(trois_cent_un.getNbPlayers)
-                console.log("Les "+ answer.number_players + " joueurs possèdent un score de " + troiscentun.score + " et "+ troiscentun.nbDarts +" fléchettes chacun")
-                console.log(trois_cent_un.startGame)
+                if (answer.gamemodes == "301") {
+                    const troiscentun = new trois_cent_un()
+                    console.log("301 Nombre flechettes récupérées via super : " + troiscentun.nbDarts)
+                    console.log("Les "+ trois_cent_un.nbPlayers + " joueurs possèdent un score de " + troiscentun.score + " et "+ troiscentun.nbDarts +" fléchettes chacun")
+                    console.log(troiscentun.startGame())
+                } else {
+                    console.log("NOPE")
+                }
             }
         })
         .catch(error => {
