@@ -9,13 +9,14 @@ class trois_cent_un extends GameMode {
         this.score = score
     }
 
-    static getNbPlayers() {
-        return super.getNbPlayers()
-    }
+    // getNbPlayers() {
+    //     return nbPlayers
+    // }
 
     // function start
-    static startGame() {
-        return super.startGame()
+    
+    startGame() {
+        console.log("GO!")
         // Chaque joueur récupéré a 301 points
         // Chaque joueur lance 3(nbDarts) fleches -> (1 fleche -> entre 1 et 20 x1 x2 ou x3 MAIS AUSSI 25 x2)
     }

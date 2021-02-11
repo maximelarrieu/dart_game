@@ -7,7 +7,7 @@ class GameMode {
 
     static getNbPlayers(input) {
         this.nbPlayers = input
-        console.log('Nombre de joueurs définis à : ' + this.nbPlayers)
+        console.log('GAMEMODE Nombre de joueurs définis à : ' + this.nbPlayers)
         return this.nbPlayers
     }
 }
