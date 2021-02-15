@@ -1,7 +1,7 @@
 class GameMode {
     constructor(name, nbPlayers, nbDarts = 3) {
         this.name = name,
-        this.nbPlayers = nbPlayers,
+        this.nbPlayers = nbPlayers
         this.nbDarts = nbDarts
     }
 
