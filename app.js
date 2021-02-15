@@ -31,9 +31,10 @@ const getNbPlayers = () => {
                 console.log(`Nombre de joueurs : ${answer.number_players}`)
                 GameMode.getNbPlayers(answer.number_players)
                 if (answer.gamemodes == "301") {
-                    const troiscentun = new trois_cent_un()
+                    let troiscentun = new trois_cent_un()
                     console.log("301 Nombre flechettes récupérées via super : " + troiscentun.nbDarts)
-                    console.log("Les "+ trois_cent_un.nbPlayers + " joueurs possèdent un score de " + troiscentun.score + " et "+ troiscentun.nbDarts +" fléchettes chacun")
+                    console.log(trois_cent_un.nbPlayers)
+                    console.log("Les "+ troiscentun.nbPlayers + " joueurs possèdent un score de " + troiscentun.score + " et "+ troiscentun.nbDarts +" fléchettes chacun")
                     console.log(troiscentun.startGame())
                 } else {
                     console.log("NOPE")
