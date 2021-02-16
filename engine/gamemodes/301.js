@@ -3,8 +3,8 @@ const GameMode = require('../gamemode')
 
 class trois_cent_un extends GameMode {
     
-    constructor(name = "301", score = 301, nbPlayers, nbDarts) {
-        super(nbPlayers, nbDarts),
+    constructor(name = "301", score = 301, nbDarts, nbPlayers) {
+        super(),
         this.name = name,
         this.score = score
         this.nbPlayers = nbPlayers
@@ -30,7 +30,7 @@ class trois_cent_un extends GameMode {
 
         for(let player = 1; player <= nbPlayers; player++) {
             console.log(`Joueur ${index} lance sa flèche`)
-            for(let arrow = 1;  arrow <= nbDarts; arrow++) {
+            for(let arrow = 1; arrow <= nbDarts; arrow++) {
                 const result = shoot * multipli
                 console.log(result)
                 player.score -= result
