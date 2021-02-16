@@ -1,7 +1,7 @@
 {
     "development": {
       "username": "root",
-      "password": "Manon1405R!",
+      "password": "root",
       "database": "dart_game",
       "host": "127.0.0.1",
       "dialect": "mysql"

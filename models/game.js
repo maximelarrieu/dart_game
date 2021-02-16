@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Game.belongsTo(models.Player)
     }
   };
   Game.init({
@@ -20,5 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Game',
   });
+  
+  Game.sync({force:true})
   return Game;
 };

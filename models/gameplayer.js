@@ -10,18 +10,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // GamePlayer.belongsTo(models.Player)
     }
   };
   GamePlayer.init({
-    remainingShots: DataTypes.NUMBER,
-    score: DataTypes.NUMBER,
-    rank: DataTypes.NUMBER,
-    order: DataTypes.NUMBER,
+    remainingShots: DataTypes.INTEGER,
+    score: DataTypes.INTEGER,
+    rank: DataTypes.INTEGER,
+    order: DataTypes.INTEGER,
     inGame: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'GamePlayer',
   });
+  // GamePlayer.sync()
   return GamePlayer;
 };

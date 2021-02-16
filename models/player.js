@@ -10,17 +10,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Player.hasMany(models.Game)
     }
   };
   Player.init({
     name: DataTypes.STRING,
     email: DataTypes.STRING,
-    gameWin: DataTypes.NUMBER,
-    gameLost: DataTypes.NUMBER
+    gameWin: DataTypes.INTEGER,
+    gameLost: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Player',
   });
+  
+  Player.sync({force:true})
   return Player;
 };

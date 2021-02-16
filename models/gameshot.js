@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   GameShot.init({
-    multiplicator: DataTypes.NUMBER,
-    sector: DataTypes.NUMBER
+    multiplicator: DataTypes.INTEGER,
+    sector: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'GameShot',
