@@ -1,9 +1,8 @@
 
 //const cors = require('cors')
 const bodyParser = require('body-parser')
-const { GEOMETRY } = require('sequelize/types')
 
-const Game = require('../models/game')
+const Game = require('../models').Game
 
 // const corsOptions = {
 //  origin: 'http://localhost:3000',
@@ -21,48 +20,50 @@ module.exports = app => {
 
     let router = require('express').Router();
 
-    router.get("/games", function() {
+    router.get("/games", function(req, res) {
         Game.findAll()
             .then(function (games) {
-                res.render('games/index', {
+                console.log(games)
+                res.render('games/index.pug', {
                     title: 'Parties',
                     games: games
                 })
             })
     });
 
-    router.get("/games/new", function() {
-        res.render('games/new', {
+    router.get("/games/new", function(req, res) {
+        res.render('games/new.pug', {
             game: Game
         })
     });
 
-    router.post("/games", function() {
+    router.post("/games", jsonParser, function(req, res) {
         Game.create({
-            name: req.body.name,
+            name: req.body.name
           })
           .then(function () {
-            res.redirect('/games/' + req.params.id)
+            res.redirect('/api/games/' + req.params.id)
           });
     });
 
-    router.get("/games/:id", function() {
+    router.get("/games/:id", function(req, res) {
+        const id = req.params.id
         Game.findByPk(id)
             .then(function (Game) {
-                res.render('games/details', {
+                res.render('games/details.pug', {
                     game: Game
                 })
             })
     });
 
-    router.get("/games/:id/edit", function() {
-        res.render('/games/' + req.params.id + "/edit", {
+    router.get("/games/:id/edit", function(req, res) {
+        res.render('/games/edit.pug', {
             id: req.params.id
         })
 
     });
 
-    router.patch("/games/:id", function() {
+    router.patch("/games/:id", function(req, res) {
         Game.update({
             name: req.body.name,
         },  {
@@ -77,35 +78,35 @@ module.exports = app => {
             });
     })
 
-    router.delete("/games/:id", function() {
+    router.delete("/games/:id", function(req, res) {
         Game.destroy({
             where: {
                 id: req.params.id
             }
         })
             .then(function () {
-                res.redirect('/games/index')
+                res.redirect('/games/index.pug')
             });
     })
 
-    router.get("/games/:id/players", function () {
+    router.get("/games/:id/players", function (req, res) {
         Game.findByPk(id)
             .then(function (Game) {
-                res.render('games/players', {
+                res.render('games/players.pug', {
                     players: Game.Players
                 })
             })
     })
 
-    router.post("/games/:id/players", function () {
+    router.post("/games/:id/players", function (req, res) {
         Game.update
     })
 
-    router.delete("/games/:id/players", function () {
+    router.delete("/games/:id/players", function (req, res) {
         Game.destroy() 
     })
 
-    router.post("/games/:id/shots", function () {
+    router.post("/games/:id/shots", function (req, res) {
 
     })
 
