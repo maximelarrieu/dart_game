@@ -1,10 +1,9 @@
 const express = require('express')
 const inquirer = require('inquirer');
-const { Model } = require('sequelize');
-const Sequelize = require('sequelize')
 const SequelizeSimpleCache = require('sequelize-simple-cache')
 const app = express();
 const port = 3000
+const bodyParser = require('body-parser');
 
 const GameMode = require('./engine/gamemode');
 const trois_cent_un = require('./engine/gamemodes/301');
@@ -20,10 +19,13 @@ const cache = new SequelizeSimpleCache({
 
 cache.clear()
 
-// const Player = cache.init(require('./models/player')(sequelize))
-// const Game = cache.init(require('./models/game')(sequelize))
+require("./routers/game")(app);
+require("./routers/player")(app);
 
-// Player.cacheClearAll()
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
+
+app.listen(port, () => console.log(`Port sur écoute : ${port}`));
 
 const getNbPlayers = () => {
     inquirer
