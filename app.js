@@ -1,11 +1,27 @@
 const express = require('express')
-const inquirer = require('inquirer')
+const inquirer = require('inquirer');
+const { Model } = require('sequelize');
+const Sequelize = require('sequelize')
+const SequelizeSimpleCache = require('sequelize-simple-cache')
 const app = express();
 const port = 3000
 
 const GameMode = require('./engine/gamemode');
 const trois_cent_un = require('./engine/gamemodes/301');
-const GameMode301 = require('./engine/gamemodes/301')
+const GameMode301 = require('./engine/gamemodes/301');
+const { sequelize } = require('./models');
+
+const cache = new SequelizeSimpleCache({
+    Player: {ttl: 1 * 60},
+    Game: {ttl: 1 * 60}
+})
+
+cache.clear()
+
+// const Player = cache.init(require('./models/player')(sequelize))
+// const Game = cache.init(require('./models/game')(sequelize))
+
+// Player.cacheClearAll()
 
 // const getNbPlayers = () => {
 //     inquirer
