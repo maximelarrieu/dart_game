@@ -3,7 +3,8 @@ extends index.pug
 block content 
     h1 Création d'une partie
 
-    form(action="/games", method="POST")
+    form(action="/api/games", method="POST")
         p 
             | name: 
-            input(type="text", name="name", value="")
+            input(type="text", name="name")
+        input(type="submit")
