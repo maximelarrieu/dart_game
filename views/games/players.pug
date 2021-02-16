@@ -1,0 +1,8 @@
+extends index.pug 
+
+block content 
+    h1 Liste des joueurs de la partie 
+
+    ul 
+        each player in game.Players 
+            li= player.name

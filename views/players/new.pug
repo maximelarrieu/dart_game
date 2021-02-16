@@ -1,0 +1,7 @@
+extends index.pug 
+
+block content 
+    form(action="/games", method="POST")
+    p 
+        | name: 
+        input(type="text", name="name", value="")

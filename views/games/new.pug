@@ -1,0 +1,9 @@
+extends index.pug 
+
+block content 
+    h1 Création d'une partie
+
+    form(action="/games", method="POST")
+        p 
+            | name: 
+            input(type="text", name="name", value="")
