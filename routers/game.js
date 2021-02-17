@@ -23,27 +23,36 @@ module.exports = app => {
     router.get("/games", function(req, res) {
         Game.findAll()
             .then(function (games) {
-                console.log(games)
                 res.render('games/index.pug', {
+                    
                     title: 'Parties',
                     games: games
                 })
             })
     });
 
-    router.get("/games/new", function(req, res) {
+    router.get("/games/new", jsonParser, urlencodedParser, function(req, res) {
         res.render('games/new.pug', {
             game: Game
         })
     });
 
-    router.post("/games", jsonParser, function(req, res) {
+    router.post("/games", jsonParser, urlencodedParser, function(req, res) {
         Game.create({
             name: req.body.name
           })
           .then(function () {
-            res.redirect('/api/games/' + req.params.id)
+            res.redirect(`/api/games/${Game.id}`)
           });
+        // let name = req.body.name
+        // let newGame = {name:name}
+        // Game.create(newGame, (err, newlyGame) => {
+        //     if(err) {
+        //         console.log(err)
+        //     } else {
+        //         res.redirect(`/games/${newlyGame._id}`)
+        //     }
+        //   })
     });
 
     router.get("/games/:id", function(req, res) {
@@ -57,9 +66,15 @@ module.exports = app => {
     });
 
     router.get("/games/:id/edit", function(req, res) {
-        res.render('/games/edit.pug', {
-            id: req.params.id
-        })
+        const id = req.params.id
+        Game.findByPk(id)
+            .then(function (Game) {
+                res.render('games/edit.pug', {
+                    id: req.params.id,
+                    game: Game
+                })
+            })
+
 
     });
 
