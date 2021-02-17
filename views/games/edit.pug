@@ -3,7 +3,7 @@ extends skeleton.pug
 block content 
     h1 Edition d'une partie
 
-    form(action="/api/games/" + game.id, method="PUT")
+    form(action="/api/games/" + game.id, method="POST")
         p 
             | name: 
             input(type="text", name="name", value=`${game.name}`)
