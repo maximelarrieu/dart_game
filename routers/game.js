@@ -78,7 +78,7 @@ module.exports = app => {
 
     });
 
-    router.patch("/games/:id", function(req, res) {
+    router.post("/games/:id", function(req, res) {
         Game.update({
             name: req.body.name,
         },  {
@@ -86,11 +86,9 @@ module.exports = app => {
                 id: req.params.id
             }
         })
-            .then(function () {
-                res.redirect('/games/' + req.params.id, {
-                    id: req.params.id
-                })
-            });
+        .then(function () {
+            res.redirect(303, '/api/games')
+        });
     })
 
     router.delete("/games/:id", function(req, res) {
