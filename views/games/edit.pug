@@ -1,9 +1,10 @@
-extends index.pug 
+extends skeleton.pug 
 
 block content 
     h1 Edition d'une partie
 
-    form(action="/games/" + id, method="PUT")
-    p 
-        | name: 
-        input(type="text", name="name", value="")
+    form(action="/api/games/" + game.id, method="PUT")
+        p 
+            | name: 
+            input(type="text", name="name", value=`${game.name}`)
+        input(type="submit" value="Editer")
