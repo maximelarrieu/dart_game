@@ -1,4 +1,3 @@
-
 //const cors = require('cors')
 const bodyParser = require('body-parser')
 
@@ -32,6 +31,7 @@ module.exports = app => {
     });
 
     router.get("/games/new", jsonParser, urlencodedParser, function(req, res) {
+        console.log(req.body.select)
         res.render('games/new.pug', {
             game: Game
         })
@@ -39,20 +39,12 @@ module.exports = app => {
 
     router.post("/games", jsonParser, urlencodedParser, function(req, res) {
         Game.create({
+            mode: req.body.select,
             name: req.body.name
           })
-          .then(function () {
-            res.redirect(`/api/games/${Game.id}`)
+          .then(function (game) {
+            res.redirect(`/api/games/${game.id}`)
           });
-        // let name = req.body.name
-        // let newGame = {name:name}
-        // Game.create(newGame, (err, newlyGame) => {
-        //     if(err) {
-        //         console.log(err)
-        //     } else {
-        //         res.redirect(`/games/${newlyGame._id}`)
-        //     }
-        //   })
     });
 
     router.get("/games/:id", function(req, res) {
@@ -68,37 +60,36 @@ module.exports = app => {
     router.get("/games/:id/edit", function(req, res) {
         const id = req.params.id
         Game.findByPk(id)
-            .then(function (Game) {
+            .then(function (game) {
                 res.render('games/edit.pug', {
-                    id: req.params.id,
-                    game: Game
+                    game: game
                 })
             })
 
 
     });
 
-    router.post("/games/:id", function(req, res) {
+    router.post("/games/:id", jsonParser, urlencodedParser, function(req, res) {
         Game.update({
+            mode: req.body.select,
             name: req.body.name,
         },  {
-            where: {
-                id: req.params.id
-            }
+            where: {id:req.params.id},
         })
         .then(function () {
-            res.redirect(303, '/api/games')
-        });
+            res.redirect(303, `/api/games/` + req.params.id)
+        })
     })
 
-    router.delete("/games/:id", function(req, res) {
+    router.post("/games/:id/delete", function(req, res) {
         Game.destroy({
+            force: true,
             where: {
                 id: req.params.id
             }
         })
             .then(function () {
-                res.redirect('/games/index.pug')
+                res.redirect(303, '/api/games')
             });
     })
 
