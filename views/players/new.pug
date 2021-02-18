@@ -1,7 +1,16 @@
-extends index.pug 
+extends skeleton.pug
 
-block content 
-    form(action="/games", method="POST")
-    p 
-        | name: 
-        input(type="text", name="name", value="")
+block content
+
+    a(href="/api/players") Accueil joueurs
+
+    h1 Création d'un joueur
+
+    form(action="/api/players", method="POST")
+        p 
+            | name: 
+            input(type="text", required, name="name")
+        p
+            | email: 
+            input(type="email", required, name="email")
+        input(type="submit" value="Créer")

@@ -2,6 +2,18 @@ extends skeleton.pug
 
 block content
 
-    h1= game.name 
+    a(href="/api/games") Accueil parties
 
+    h1 Détails de la partie
+
+    h4 Nom de la partie
+    p= game.name 
+
+    h4 Mode de jeu choisi
     p= game.mode
+
+    form(action=`/api/games/${game.id}/edit`, method="GET")
+        input(type="submit" value="Éditer")
+    
+    form(action=`/api/games/${game.id}/delete`, method="POST")
+        input(type="submit" value="Supprimer")

@@ -1,0 +1,16 @@
+extends skeleton.pug 
+
+block content 
+
+    a(href="/api/players") Accueil joueurs
+
+    h1 Edition d'un joueur
+
+    form(action="/api/players/" + player.id, method="POST")
+        p 
+            | name: 
+            input(type="text", required, name="name", value=`${player.name}`)
+        p
+            | email: 
+            input(type="email", required, name="email", value=`${player.email}`)
+        input(type="submit" value="Editer")

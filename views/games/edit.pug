@@ -1,10 +1,16 @@
 extends skeleton.pug 
 
 block content 
+
+    a(href="/api/games") Accueil
+
     h1 Edition d'une partie
 
     form(action="/api/games/" + game.id, method="POST")
+        select(name="select" value=`${game.mode}`)
+            option(value="301") 301
+            option(value="test") test
         p 
             | name: 
-            input(type="text", name="name", value=`${game.name}`)
+            input(type="text", required, name="name", value=`${game.name}`)
         input(type="submit" value="Editer")
