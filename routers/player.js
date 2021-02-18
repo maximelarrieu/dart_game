@@ -1,7 +1,7 @@
 //const cors = require('cors')
 const bodyParser = require('body-parser')
 
-const Player = require('../models/player')
+const Player = require('../models').Player
 
 // const corsOptions = {
 //  origin: 'http://localhost:3000',
@@ -19,69 +19,74 @@ module.exports = app => {
 
     let router = require('express').Router();
 
-    router.get("/players", function() {
+    router.get("/players", function(req, res) {
         Player.findAll()
             .then(function (players) {
-                res.render('players/index', {
+                res.render('players/index.pug', {
                     title: 'Joueurs',
                     players: players
                 })
             })
     });
 
-    router.post("/players", function() {
+    router.post("/players", jsonParser, urlencodedParser, function(req, res) {
         Player.create({
             name: req.body.name,
+            email: req.body.email
           })
-          .then(function () {
-            res.redirect('/players/' + req.params.id)
+          .then(function (player) {
+            res.redirect(`/api/players/${player.id}`)
           });
     });
 
-    router.get("/players/new", function() {
-        res.render('players/new', {
+    router.get("/players/new", function(req, res) {
+        res.render('players/new.pug', {
             player: Player
         })
     });
 
-    router.get("/players/:id", function() {
+    router.get("/players/:id", function(req, res) {
+        const id = req.params.id
         Player.findByPk(id)
             .then(function (Player) {
-                res.render('players/details', {
+                res.render('players/details.pug', {
                     player: Player
                 })
             })
     });
 
-    router.get("/players/:id/edit", function() {
-        res.render('/players/' + req.params.id + "/edit", {
-            id: req.params.id
-        })
+    router.get("/players/:id/edit", function(req, res) {
+        const id = req.params.id
+        Player.findByPk(id)
+            .then(function (player) {
+                res.render('players/edit.pug', {
+                    player: player
+                })
+            })
     });
 
-    router.patch("/players/:id", function() {
+    router.post("/players/:id", jsonParser, urlencodedParser, function(req, res) {
         Player.update({
             name: req.body.name,
+            email: req.body.email
         },  {
             where: {
                 id: req.params.id
             }
         })
-            .then(function () {
-                res.redirect('/players/' + req.params.id, {
-                    id: req.params.id
-                })
-            });
+        .then(function () {
+            res.redirect('/api/players/' + req.params.id)
+        });
     });
 
-    router.delete("/players/:id", function() {
+    router.post("/players/:id/delete", function(req, res) {
         Player.destroy({
             where: {
                 id: req.params.id
             }
         })
             .then(function () {
-                res.redirect('/players/index')
+                res.redirect('/api/players')
             });
     });
 
