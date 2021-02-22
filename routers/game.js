@@ -2,6 +2,11 @@
 const bodyParser = require('body-parser')
 
 const Game = require('../models').Game
+const GamePlayer = require('../models').GamePlayer
+const Player = require('../models').Player
+
+const troiscentun = require('../engine/gamemodes/301')
+let t_c_u = new troiscentun
 
 // const corsOptions = {
 //  origin: 'http://localhost:3000',
@@ -22,6 +27,7 @@ module.exports = app => {
     router.get("/games", function(req, res) {
         Game.findAll()
             .then(function (games) {
+                console.log(games)
                 res.render('games/index.pug', {
                     
                     title: 'Parties',
@@ -94,16 +100,45 @@ module.exports = app => {
     })
 
     router.get("/games/:id/players", function (req, res) {
-        Game.findByPk(id)
-            .then(function (Game) {
-                res.render('games/players.pug', {
-                    players: Game.Players
+        const id = req.params.id
+        // Game.findByPk(id, {
+        //     include: {
+        //         model: Player,
+        //         attributes: ['name']
+        //     }
+        // })
+        //     .then(function (Game) {
+        //         console.log(Game)
+        //         res.render('games/players.pug', {
+        //             id: Game.id,
+        //             players: Game.Player
+        //         })
+        //     })
+        Player.findAll({
+            include: {
+                model: Game,
+                attributes: ['id']
+            }
+        })
+                .then(function(players) {
+                            console.log(players.id)
+
+                    res.render('games/players.pug', {
+                        players: players,
+                        id: id
+                    })
                 })
-            })
     })
 
-    router.post("/games/:id/players", function (req, res) {
-        Game.update
+    router.post("/games/:id/players/:player_id", function (req, res) {
+        GamePlayer.create({
+            gameId: req.params.id,
+            playerId: req.params.player_id,
+            // remainingShots: t_c_u.getNbDarts()
+        })
+        .then(function(gameplayer) {
+            res.redirect(`/api/games/${gameplayer.id}/players`)
+        })
     })
 
     router.delete("/games/:id/players", function (req, res) {
