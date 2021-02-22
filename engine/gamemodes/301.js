@@ -7,7 +7,12 @@ class trois_cent_un extends GameMode {
         super(),
         this.name = name,
         this.score = score
-        this.nbPlayers = nbPlayers
+        this.nbPlayers = nbPlayers,
+        this.nbDarts = nbDarts
+    }
+
+    getNbDarts() {
+        return this.nbDarts
     }
 
     // function start
