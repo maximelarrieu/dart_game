@@ -6,7 +6,7 @@ const GamePlayer = require('../models').GamePlayer
 const Player = require('../models').Player
 
 const troiscentun = require('../engine/gamemodes/301')
-let t_c_u = new troiscentun
+// let t_c_u = new troiscentun
 
 // const corsOptions = {
 //  origin: 'http://localhost:3000',
@@ -92,7 +92,7 @@ module.exports = app => {
         })
     })
 
-    router.post("/games/:id/delete", function(req, res) {
+    router.post("/games/:id/delete", function(req, res) {        
         Game.destroy({
             force: true,
             where: {
@@ -116,27 +116,37 @@ module.exports = app => {
             }]
         })
         .then(function(players) {
-            console.log(players.GamePlayers)
             res.render('games/players.pug', {
                 players: players,
                 id: id
                 })
             })
     })
-
-    router.post("/games/:id/players/:player_id", function (req, res) {
-        GamePlayer.create({
-            gameId: req.params.id,
-            playerId: req.params.player_id,
-            // remainingShots: t_c_u.getNbDarts()
-        })
-        .then(function(gameplayer) {
-            res.redirect(`/api/games/${gameplayer.id}/players`)
-        })
+    router.post("/games/:id/players/", jsonParser, urlencodedParser, function (req, res) {
+        for (let c in req.body.checked) {
+            GamePlayer.create({
+                gameId: req.params.id,
+                playerId: req.body.checked[c],
+                remainingShots: troiscentun.nbDarts
+            })
+            .then(function() {
+                res.redirect(`/api/games/${req.params.id}/players`)
+            })
+        }
     })
 
-    router.delete("/games/:id/players", function (req, res) {
-        Game.destroy() 
+    router.post("/games/:id/players/delete", jsonParser, urlencodedParser, function (req, res) {
+        for (let c in req.body.checked) {
+            GamePlayer.destroy({
+                force: true,
+                where: {
+                    playerId: req.body.checked[c]
+                }
+            })
+            .then(function() {
+                res.redirect(`/api/games/${req.params.id}/players`)
+            })
+        }
     })
 
     router.post("/games/:id/shots", function (req, res) {
