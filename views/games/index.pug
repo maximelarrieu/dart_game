@@ -2,7 +2,9 @@ extends skeleton.pug
 
 block content
     h1 Liste des games
-
+    p
+        a(href="/api/players") Liste des joueurs    
+    
     form(action=`/api/games/new`, method="GET")
         input(type="submit" value="Créer une partie")
 

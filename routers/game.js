@@ -24,6 +24,11 @@ module.exports = app => {
 
     let router = require('express').Router();
 
+    router.get('/', function(req, res) {
+        res.redirect(303, '/api/games/')
+        res.json("406 API_NOT_AVAILABLE")
+    })
+
     router.get("/games", function(req, res) {
         Game.findAll()
             .then(function (games) {
@@ -101,33 +106,22 @@ module.exports = app => {
 
     router.get("/games/:id/players", function (req, res) {
         const id = req.params.id
-        // Game.findByPk(id, {
-        //     include: {
-        //         model: Player,
-        //         attributes: ['name']
-        //     }
-        // })
-        //     .then(function (Game) {
-        //         console.log(Game)
-        //         res.render('games/players.pug', {
-        //             id: Game.id,
-        //             players: Game.Player
-        //         })
-        //     })
         Player.findAll({
-            include: {
-                model: Game,
-                attributes: ['id']
-            }
+            include: [{
+                model: GamePlayer,
+                include: {
+                    model: Game,
+                    attributes: ['id']
+                }
+            }]
         })
-                .then(function(players) {
-                            console.log(players.id)
-
-                    res.render('games/players.pug', {
-                        players: players,
-                        id: id
-                    })
+        .then(function(players) {
+            console.log(players.GamePlayers)
+            res.render('games/players.pug', {
+                players: players,
+                id: id
                 })
+            })
     })
 
     router.post("/games/:id/players/:player_id", function (req, res) {

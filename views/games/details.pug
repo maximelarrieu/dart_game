@@ -6,6 +6,9 @@ block content
 
     h1 Détails de la partie
 
+    form(action=`/api/games/${game.id}/players`, method="GET")
+        input(type="submit" value="Gestion des joueurs")
+
     h4 Nom de la partie
     p= game.name 
 
