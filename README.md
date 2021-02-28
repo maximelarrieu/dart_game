@@ -2,10 +2,12 @@
 
 B3C NodeJS project
 
-- route post games/:id/players(/player_id) <- récupère pas le player sans un player id
+### Fonctionnalités mises en place
+- CRUD des models Games et Players fonctionnels.
+- Ajout de Players à une Game.
+- Fonction tir qui génère un GameShot (associé à une Game).
 
-- même route <- récupérer données d'une classe pour l'enregistrer en base
+### Problèmes rencontrés
+- Faire tirer un joueur en particulier pour lui associer le GameShot.
+- Soustraire le score d'un joueur avec la valeur du GameShot effectué.
 
-- tableau user ajouté dans la game / user non ajouté ~~~~
-
-- model game <- à quoi sert currentPlayerId
