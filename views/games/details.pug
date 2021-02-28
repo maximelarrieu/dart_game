@@ -6,41 +6,10 @@ block content
 
         h1 Détails de la partie
 
-        form(action=`/api/games/${game.id}/players`, method="GET")
+        form(action=`/api/games/${id}/players`, method="GET")
             input(type="submit" value="Gestion des joueurs")
 
-<<<<<<< Updated upstream
-        h4 Nom de la partie
-        p= game.name 
-
-        h4 Mode de jeu choisi
-        p= game.mode
-
-        form(action=`/api/games/${game.id}/edit`, method="GET")
-            input(type="submit" value="Éditer")
-        
-        form(action=`/api/games/${game.id}/delete`, method="POST")
-            input(type="submit" value="Supprimer")
-        
-    div 
-        hr
-
-        h1 Partie en cours ...
-
-        h4 Règles du jeu :
-        p Chaque joueur commence la partie avec 301 points. 
-        p Chacun leur tour, les joueur vont lancer trois fléchettes afin de baisser leur score.
-        p Le premier joueur qui arrive exactement à zéro a gagné.
-
-        form(action=`/api//games/${id}/shots`, method="GET")
-            input(type="submit" value="Lancer la fléchette")
-
-        
-=======
     each g in game
-        form(action=`/api/games/${game.id}/players`, method="GET")
-            input(type="submit" value="Gestion des joueurs")
-
         h4 Nom de la partie
         p= g.name 
 
@@ -57,7 +26,32 @@ block content
                 tr(style="text-align: center")
                     td= player.Player.name
                     td= player.Player.order 
-                    td= player.Player.Score
+                    td= player.score
+
+        form(action=`/api/games/${g.id}/edit`, method="GET")
+            input(type="submit" value="Éditer")
+        
+        form(action=`/api/games/${g.id}/delete`, method="POST")
+            input(type="submit" value="Supprimer")
+        
+        div 
+            hr
+
+            h1 Partie en cours ...
+
+            h4 Règles du jeu :
+            p Chaque joueur commence la partie avec 301 points. 
+            p Chacun leur tour, les joueur vont lancer trois fléchettes afin de baisser leur score.
+            p Le premier joueur qui arrive exactement à zéro a gagné.
+
+            form(action=`/api/games/${id}/shots`, method="POST")
+                - let index = 1
+                while index <= 20
+                    input(type="submit", name="shot", value=index++)
+                input(type="submit", name="shot", value=25)
+
+        
+
     //- //- h4 Mode de jeu choisi
     //- //- p= game.mode
 
@@ -71,4 +65,3 @@ block content
     //-     input(type="submit" value="Supprimer")
 
 //- <-------------------- passer gameplayers comme ça permet de parser vers Game
->>>>>>> Stashed changes
