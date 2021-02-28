@@ -3,9 +3,9 @@ extends skeleton.pug
 block content
     h1 Liste des joueurs
     p
-        a(href="/api/games") Liste des parties   
+        a(href="/games") Liste des parties   
 
-    form(action=`/api/players/new`, method="GET")
+    form(action=`/players/new`, method="GET")
         input(type="submit" value="Créer un joueur")
 
     if players.length === 0
@@ -21,7 +21,7 @@ block content
                     td= player.name 
                     td= player.email
                     td
-                        form(action=`/api/players/${player.id}`, method="GET")
+                        form(action=`/players/${player.id}`, method="GET")
                             input(type="submit" value="Détails")
-                        form(action=`/api/players/${player.id}/delete`, method="POST")
+                        form(action=`/players/${player.id}/delete`, method="POST")
                             input(type="submit" value="Supprimer")

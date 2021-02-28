@@ -2,11 +2,11 @@ extends skeleton.pug
 
 block content
 
-    a(href="/api/players") Accueil joueurs
+    a(href="/players") Accueil joueurs
 
     h1 Création d'un joueur
 
-    form(action="/api/players", method="POST")
+    form(action="/players", method="POST")
         p 
             | name: 
             input(type="text", required, name="name")

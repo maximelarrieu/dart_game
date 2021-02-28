@@ -2,11 +2,11 @@ extends skeleton.pug
 
 block content
 
-    a(href="/api/games") Accueil parties
+    a(href="/games") Accueil parties
 
     h1 Création d'une partie
 
-    form(action="/api/games", method="POST")
+    form(action="/games", method="POST")
         select(name="select")
             option(value="301") 301
             option(value="test") test

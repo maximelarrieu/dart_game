@@ -2,7 +2,7 @@ extends skeleton.pug
 
 block content
 
-    a(href="/api/players") Accueil joueurs
+    a(href="/players") Accueil joueurs
 
     h1 Détails du joueur
 
@@ -12,8 +12,8 @@ block content
     h4 Email du joueur
     p= player.email
 
-    form(action=`/api/players/${player.id}/edit`, method="GET")
+    form(action=`/players/${player.id}/edit`, method="GET")
         input(type="submit" value="Éditer")
     
-    form(action=`/api/players/${player.id}/delete`, method="POST")
+    form(action=`/players/${player.id}/delete`, method="POST")
         input(type="submit" value="Supprimer")

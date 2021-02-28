@@ -11,7 +11,7 @@ block content
             p 0
         else
             p= result
-        form(action=`/api/games/${id}/players/delete`, method="POST")
+        form(action=`/games/${id}/players/delete`, method="POST")
             table(style="width:40%", border=2)
                 tr
                     th Nom 
@@ -27,7 +27,7 @@ block content
                                 input(type="checkbox", name="checked" value=player.id)
             input(type="submit" value="Retirer")
         p Reste des joueurs
-        form(action=`/api/games/${id}/players/`, method="POST")
+        form(action=`/games/${id}/players/`, method="POST")
             table(style="width:40%", border=2)
                 tr
                     th Nom 
@@ -43,5 +43,5 @@ block content
             input(type="submit" value="Ajouter")
 
     p
-        a(href=`/api/games/${id}`) Retour au détails de la partie
+        a(href=`/games/${id}`) Retour au détails de la partie
     

@@ -2,11 +2,11 @@ extends skeleton.pug
 
 block content
     div
-        a(href="/api/games") Accueil parties
+        a(href="/games") Accueil parties
 
         h1 Détails de la partie
 
-        form(action=`/api/games/${id}/players`, method="GET")
+        form(action=`/games/${id}/players`, method="GET")
             input(type="submit" value="Gestion des joueurs")
 
     each g in game
@@ -32,10 +32,10 @@ block content
                         //- else 
                         //-     td= player.score
 
-        form(action=`/api/games/${g.id}/edit`, method="GET")
+        form(action=`/games/${g.id}/edit`, method="GET")
             input(type="submit" value="Éditer")
         
-        form(action=`/api/games/${g.id}/delete`, method="POST")
+        form(action=`/games/${g.id}/delete`, method="POST")
             input(type="submit" value="Supprimer")
         
         div 
@@ -45,10 +45,10 @@ block content
 
             h4 Règles du jeu :
             p Chaque joueur commence la partie avec 301 points. 
-            p Chacun leur tour, les joueur vont lancer trois fléchettes afin de baisser leur score.
+            p Chacun leur tour, les joueurs vont lancer trois fléchettes afin de baisser leur score.
             p Le premier joueur qui arrive exactement à zéro a gagné.
 
-            form(action=`/api/games/${id}/shots`, method="POST")
+            form(action=`/games/${id}/shots`, method="POST")
                 - let index = 1
                 while index <= 20
                     input(type="submit", name="shot", value=index++)
