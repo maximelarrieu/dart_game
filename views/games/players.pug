@@ -7,6 +7,10 @@ block content
        p Pas de joueurs trouvés
     else
         p Participant(s)
+        if !result
+            p 0
+        else
+            p= result
         form(action=`/api/games/${id}/players/delete`, method="POST")
             table(style="width:40%", border=2)
                 tr

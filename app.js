@@ -4,8 +4,6 @@ const SequelizeSimpleCache = require('sequelize-simple-cache')
 const app = express();
 const port = 3000
 const bodyParser = require('body-parser');
-const methodOverride = require('method-override')
-
 
 const GameMode = require('./engine/gamemode');
 const trois_cent_un = require('./engine/gamemodes/301');
@@ -21,16 +19,9 @@ const cache = new SequelizeSimpleCache({
 
 cache.clear()
 
-// create application/json parser
-var jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
 require("./routers/game")(app);
 require("./routers/player")(app);
 
-app.use(methodOverride('_method'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 

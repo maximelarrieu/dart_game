@@ -116,19 +116,33 @@ module.exports = app => {
         .then(function(players) {
             res.render('games/players.pug', {
                 players: players,
-                id: id
-                })
+                id: id,
+                result: req.query.nbPlayers
             })
+        })
     })
     router.post("/games/:id/players/", jsonParser, urlencodedParser, function (req, res) {
         for (let c in req.body.checked) {
             GamePlayer.create({
+                include: [{
+                    model: Player
+                }],
                 gameId: req.params.id,
                 playerId: req.body.checked[c],
                 remainingShots: troiscentun.nbDarts
             })
             .then(function() {
-                res.redirect(`/api/games/${req.params.id}/players`)
+                let counter = GamePlayer.count({where:{gameId: req.params.id}})
+                counter.then(function(result) {
+                    console.log(result)
+                    let test = encodeURIComponent(result)
+                    res.redirect(303, `/api/games/${req.params.id}/players/?nbPlayers=${test}`)
+                })
+                // console.log(gp)
+                // console.log("id = " + gp.gameId)
+                // console.log("length = " + gp.length)
+                // let test = encodeURIComponent(gp)
+                // console.log(test)
             })
         }
     })
@@ -142,7 +156,12 @@ module.exports = app => {
                 }
             })
             .then(function() {
-                res.redirect(`/api/games/${req.params.id}/players`)
+                let counter = GamePlayer.count({where:{gameId: req.params.id}})
+                counter.then(function(result) {
+                    console.log(result)
+                    let test = encodeURIComponent(result)
+                    res.redirect(`/api/games/${req.params.id}/players?nbPlayers=${test}`)
+                })
             })
         }
     })
