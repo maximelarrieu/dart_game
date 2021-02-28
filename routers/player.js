@@ -3,22 +3,13 @@ const bodyParser = require('body-parser')
 
 const Player = require('../models').Player
 
-// const corsOptions = {
-//  origin: 'http://localhost:3000',
-//  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-//}
-
-// create application/json parser
 var jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 module.exports = app => {
-    //const game = require("../engine/EventController");
-
     let router = require('express').Router();
 
+    // Page qui liste les joueurs créées en base de données
     router.get("/players", function(req, res) {
         Player.findAll()
             .then(function (players) {
@@ -29,22 +20,25 @@ module.exports = app => {
             })
     });
 
+    // Route qui crée un joueur et l'enregistre en base de données
     router.post("/players", jsonParser, urlencodedParser, function(req, res) {
         Player.create({
             name: req.body.name,
             email: req.body.email
           })
           .then(function (player) {
-            res.redirect(`/api/players/${player.id}`)
+            res.redirect(`/players/${player.id}`)
           });
     });
 
+    // Page du formulaire de création de joueur
     router.get("/players/new", function(req, res) {
         res.render('players/new.pug', {
             player: Player
         })
     });
 
+    // Page de détails d'un joueur
     router.get("/players/:id", function(req, res) {
         const id = req.params.id
         Player.findByPk(id)
@@ -55,6 +49,7 @@ module.exports = app => {
             })
     });
 
+    // Page du formulaire d'édition d'un joueur
     router.get("/players/:id/edit", function(req, res) {
         const id = req.params.id
         Player.findByPk(id)
@@ -65,6 +60,7 @@ module.exports = app => {
             })
     });
 
+    // Route qui modifie et PATCH un joueur en base de données
     router.post("/players/:id", jsonParser, urlencodedParser, function(req, res) {
         Player.update({
             name: req.body.name,
@@ -75,10 +71,11 @@ module.exports = app => {
             }
         })
         .then(function () {
-            res.redirect('/api/players/' + req.params.id)
+            res.redirect('/players/' + req.params.id)
         });
     });
 
+    // Route qui supprime un joueur en base de données
     router.post("/players/:id/delete", function(req, res) {
         Player.destroy({
             where: {
@@ -86,9 +83,9 @@ module.exports = app => {
             }
         })
             .then(function () {
-                res.redirect('/api/players')
+                res.redirect('/players')
             });
     });
 
-    app.use('/api', router)
+    app.use('/', router)
 }
