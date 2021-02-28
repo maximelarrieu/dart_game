@@ -10,12 +10,6 @@ class trois_cent_un extends GameMode {
         this.name = name,
         this.score = score
     }
-
-    // getNbDarts() {
-    //     return this.nbDarts
-    // }
-
-    // function start
     startGame() {
         console.log("GO! : " + this.nbPlayers)
         // Chaque joueur récupéré a 301 points
