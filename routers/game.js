@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 
 const Game = require('../models').Game
 const GamePlayer = require('../models').GamePlayer
+const GameShot = require('../models').GameShot
 const Player = require('../models').Player
 
 const troiscentun = require('../engine/gamemodes/301')
@@ -79,7 +80,9 @@ module.exports = app => {
                 // res.json(gp)
                 // console.log(gp)
                 res.render('games/details.pug', {
-                    game: gp
+                    game: gp,
+                    id: passedId,
+                    score: troiscentun.score
                 })
             })
         // } else {
@@ -154,7 +157,8 @@ module.exports = app => {
                 }],
                 gameId: req.params.id,
                 playerId: req.body.checked[c],
-                remainingShots: troiscentun.nbDarts
+                remainingShots: troiscentun.nbDarts,
+                score: troiscentun.score
             })
             .then(function() {
                 let counter = GamePlayer.count({where:{gameId: req.params.id}})
@@ -191,9 +195,16 @@ module.exports = app => {
         }
     })
 
-    router.post("/games/:id/shots", function (req, res) {
-        
-
+    router.post("/games/:id/shots", jsonParser, urlencodedParser, function (req, res) {
+        // let result = troiscentun.shot()
+        GameShot.create({
+            sector: req.body.shot,
+            gameId: req.params.id,
+            // playerId: 
+        })
+        .then(function(gs) {
+            res.redirect(`/api/games/${gs.gameId}`)
+        })
     })
 
     //ROUTE FACULTATIVE
