@@ -1,6 +1,7 @@
 const { request } = require('express')
 const { nbPlayers } = require('../gamemode')
 const GameMode = require('../gamemode')
+const GamePlayer = require('../../models').GamePlayer
 
 class trois_cent_un extends GameMode {
     
@@ -24,7 +25,7 @@ class trois_cent_un extends GameMode {
    
 
     // function shot (chaque joueur y passe 3x)
-    shot() {
+    shot(sector) {
         // // Chaque score de chaque fleche baisse les points
         // let points = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25]
         // let multi = [1, 2, 3]
@@ -35,7 +36,7 @@ class trois_cent_un extends GameMode {
         // for(let player = 1; player <= nbPlayers; player++) {
         //     console.log(`Joueur ${index} lance sa flèche`)
         //     for(let arrow = 1; arrow <= nbDarts; arrow++) {
-                const result = request.body.shot
+                const result = sector
                 console.log(result)
                 return result
                 // player.score -= result
