@@ -9,6 +9,7 @@ block content
         form(action=`/api/games/${game.id}/players`, method="GET")
             input(type="submit" value="Gestion des joueurs")
 
+<<<<<<< Updated upstream
         h4 Nom de la partie
         p= game.name 
 
@@ -35,3 +36,39 @@ block content
             input(type="submit" value="Lancer la fléchette")
 
         
+=======
+    each g in game
+        form(action=`/api/games/${game.id}/players`, method="GET")
+            input(type="submit" value="Gestion des joueurs")
+
+        h4 Nom de la partie
+        p= g.name 
+
+        h4 Mode de jeu
+        p= g.mode
+
+        h4 Joueurs 
+        table(style="width: 20%", border=2)
+            tr 
+                th Nom 
+                th Ordre 
+                th Score
+            each player in g.GamePlayers
+                tr(style="text-align: center")
+                    td= player.Player.name
+                    td= player.Player.order 
+                    td= player.Player.Score
+    //- //- h4 Mode de jeu choisi
+    //- //- p= game.mode
+
+    //- //- h4 test 
+    //- //- p=game.createdAt
+
+    //- form(action=`/api/games/${game.id}/edit`, method="GET")
+    //-     input(type="submit" value="Éditer")
+    
+    //- form(action=`/api/games/${game.id}/delete`, method="POST")
+    //-     input(type="submit" value="Supprimer")
+
+//- <-------------------- passer gameplayers comme ça permet de parser vers Game
+>>>>>>> Stashed changes

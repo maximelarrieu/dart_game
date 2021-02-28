@@ -58,14 +58,39 @@ module.exports = app => {
           });
     });
 
-    router.get("/games/:id", function(req, res) {
-        const id = req.params.id
-        Game.findByPk(id)
-            .then(function (Game) {
+    router.get("/games/:id", jsonParser, urlencodedParser, function(req, res) {
+        const passedId = req.params.id
+        // if(Game.GamePlayers === 0) {
+            Game.findAll({
+                where: { 
+                    id: passedId
+                },
+                include: [{
+                    model: GamePlayer,
+                    where: {
+                        gameId: passedId
+                    },
+                    include: [{
+                        model: Player,
+                    }]
+                }]
+            })
+            .then(function (gp) {
+                // res.json(gp)
+                // console.log(gp)
                 res.render('games/details.pug', {
-                    game: Game
+                    game: gp
                 })
             })
+        // } else {
+        //     Game.findByPk(passedId)
+        //         .then(function(g) {
+        //             // res.json(g)
+        //             res.render('games/details.pug', {
+        //                 game: g
+        //             })
+        //         })
+        // }
     });
 
     router.get("/games/:id/edit", function(req, res) {
