@@ -21,5 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'GameShot',
   });
+  
+  // GameShot.sync({force:true})
   return GameShot;
 };

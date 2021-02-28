@@ -76,8 +76,6 @@ module.exports = app => {
                     game: game
                 })
             })
-
-
     });
 
     router.post("/games/:id", jsonParser, urlencodedParser, function(req, res) {
@@ -150,6 +148,7 @@ module.exports = app => {
     })
 
     router.post("/games/:id/shots", function (req, res) {
+        
 
     })
 

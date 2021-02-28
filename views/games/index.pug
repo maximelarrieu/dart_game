@@ -25,3 +25,5 @@ block content
                             input(type="submit" value="Détails")
                         form(action=`/api/games/${game.id}/delete`, method="POST")
                             input(type="submit" value="Supprimer")
+                        form(action=`/api/games/${game.id}`, method="GET")
+                            input(type="submit" value="Jouer")
