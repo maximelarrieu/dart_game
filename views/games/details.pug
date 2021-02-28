@@ -26,7 +26,11 @@ block content
                 tr(style="text-align: center")
                     td= player.Player.name
                     td= player.Player.order 
-                    td= player.score
+                    //- each shot in g.GameShots
+                    //-     if shot.playerId === player.Player.id
+                    //-         td= score - shot.sector 
+                        //- else 
+                        //-     td= player.score
 
         form(action=`/api/games/${g.id}/edit`, method="GET")
             input(type="submit" value="Éditer")
