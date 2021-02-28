@@ -66,15 +66,26 @@ module.exports = app => {
                 where: { 
                     id: passedId
                 },
-                include: [{
+                include: [
+                {
                     model: GamePlayer,
                     where: {
                         gameId: passedId
                     },
+                    required: false,
                     include: [{
                         model: Player,
+                        required: false
                     }]
-                }]
+                },
+                {
+                    model: GameShot,
+                    where: {
+                        gameId: passedId
+                    },
+                    required: false
+                }
+            ],
             })
             .then(function (gp) {
                 // res.json(gp)
@@ -196,9 +207,9 @@ module.exports = app => {
     })
 
     router.post("/games/:id/shots", jsonParser, urlencodedParser, function (req, res) {
-        // let result = troiscentun.shot()
+        let result = troiscentun.shot(req.body.shot)
         GameShot.create({
-            sector: req.body.shot,
+            sector: result,
             gameId: req.params.id,
             // playerId: 
         })
