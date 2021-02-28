@@ -1,47 +1,37 @@
 //const cors = require('cors')
 const bodyParser = require('body-parser')
 
+const sequelize = require('sequelize')
 const Game = require('../models').Game
 const GamePlayer = require('../models').GamePlayer
 const GameShot = require('../models').GameShot
 const Player = require('../models').Player
 
 const troiscentun = require('../engine/gamemodes/301')
-// let t_c_u = new troiscentun
 
-// const corsOptions = {
-//  origin: 'http://localhost:3000',
-//  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-//}
-
-// create application/json parser
 var jsonParser = bodyParser.json()
-
-// create application/x-www-form-urlencoded parser
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 module.exports = app => {
-    //const game = require("../engine/EventController");
-
     let router = require('express').Router();
 
     router.get('/', function(req, res) {
-        res.redirect(303, '/api/games/')
+        res.redirect(303, '/games/')
         res.json("406 API_NOT_AVAILABLE")
     })
 
+    // Route qui liste toutes les parties créées
     router.get("/games", function(req, res) {
         Game.findAll()
             .then(function (games) {
-                console.log(games)
                 res.render('games/index.pug', {
-                    
                     title: 'Parties',
                     games: games
                 })
             })
     });
 
+    // Page de formulaire de création d'une partie
     router.get("/games/new", jsonParser, urlencodedParser, function(req, res) {
         console.log(req.body.select)
         res.render('games/new.pug', {
@@ -49,19 +39,20 @@ module.exports = app => {
         })
     });
 
+    // Route qui crée la partie et l'enregistre en base de données
     router.post("/games", jsonParser, urlencodedParser, function(req, res) {
         Game.create({
             mode: req.body.select,
             name: req.body.name
           })
           .then(function (game) {
-            res.redirect(`/api/games/${game.id}`)
+            res.redirect(`/games/${game.id}`)
           });
     });
 
+    // Page du détail d'une partie
     router.get("/games/:id", jsonParser, urlencodedParser, function(req, res) {
         const passedId = req.params.id
-        // if(Game.GamePlayers === 0) {
             Game.findAll({
                 where: { 
                     id: passedId
@@ -75,8 +66,8 @@ module.exports = app => {
                     required: false,
                     include: [{
                         model: Player,
-                        required: false
-                    }]
+                        required: false,
+                    }],
                 },
                 {
                     model: GameShot,
@@ -88,25 +79,15 @@ module.exports = app => {
             ],
             })
             .then(function (gp) {
-                // res.json(gp)
-                // console.log(gp)
                 res.render('games/details.pug', {
                     game: gp,
                     id: passedId,
                     score: troiscentun.score
                 })
             })
-        // } else {
-        //     Game.findByPk(passedId)
-        //         .then(function(g) {
-        //             // res.json(g)
-        //             res.render('games/details.pug', {
-        //                 game: g
-        //             })
-        //         })
-        // }
     });
 
+    // Page du formulaire d'édition d'une partie
     router.get("/games/:id/edit", function(req, res) {
         const id = req.params.id
         Game.findByPk(id)
@@ -117,6 +98,7 @@ module.exports = app => {
             })
     });
 
+    // Route qui modifie et PATCH en base de données
     router.post("/games/:id", jsonParser, urlencodedParser, function(req, res) {
         Game.update({
             mode: req.body.select,
@@ -125,10 +107,11 @@ module.exports = app => {
             where: {id:req.params.id},
         })
         .then(function () {
-            res.redirect(303, `/api/games/` + req.params.id)
+            res.redirect(303, `/games/` + req.params.id)
         })
     })
 
+    // Route qui supprime la partie en base de données
     router.post("/games/:id/delete", function(req, res) {        
         Game.destroy({
             force: true,
@@ -137,10 +120,11 @@ module.exports = app => {
             }
         })
             .then(function () {
-                res.redirect(303, '/api/games')
+                res.redirect(303, '/games')
             });
     })
 
+    // Page qui liste les joueurs et permet de les ajouter à une partie
     router.get("/games/:id/players", function (req, res) {
         const id = req.params.id
         Player.findAll({
@@ -160,6 +144,8 @@ module.exports = app => {
             })
         })
     })
+
+    // Créer et enregistre les relations entre joueurs et parties
     router.post("/games/:id/players/", jsonParser, urlencodedParser, function (req, res) {
         for (let c in req.body.checked) {
             GamePlayer.create({
@@ -176,17 +162,13 @@ module.exports = app => {
                 counter.then(function(result) {
                     console.log(result)
                     let test = encodeURIComponent(result)
-                    res.redirect(303, `/api/games/${req.params.id}/players/?nbPlayers=${test}`)
+                    res.redirect(303, `/games/${req.params.id}/players/?nbPlayers=${test}`)
                 })
-                // console.log(gp)
-                // console.log("id = " + gp.gameId)
-                // console.log("length = " + gp.length)
-                // let test = encodeURIComponent(gp)
-                // console.log(test)
             })
         }
     })
 
+    // Supprime un joueur d'une partie en base de données
     router.post("/games/:id/players/delete", jsonParser, urlencodedParser, function (req, res) {
         for (let c in req.body.checked) {
             GamePlayer.destroy({
@@ -200,12 +182,13 @@ module.exports = app => {
                 counter.then(function(result) {
                     console.log(result)
                     let test = encodeURIComponent(result)
-                    res.redirect(`/api/games/${req.params.id}/players?nbPlayers=${test}`)
+                    res.redirect(`/games/${req.params.id}/players?nbPlayers=${test}`)
                 })
             })
         }
     })
 
+    // Créer un tir de joueur en base de données avec relation sur la partie
     router.post("/games/:id/shots", jsonParser, urlencodedParser, function (req, res) {
         let result = troiscentun.shot(req.body.shot)
         GameShot.create({
@@ -214,7 +197,7 @@ module.exports = app => {
             // playerId: 
         })
         .then(function(gs) {
-            res.redirect(`/api/games/${gs.gameId}`)
+            res.redirect(`/games/${gs.gameId}`)
         })
     })
 
@@ -223,5 +206,5 @@ module.exports = app => {
 
     // })
 
-    app.use('/api', router)
+    app.use('/', router)
 }
