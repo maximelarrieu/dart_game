@@ -1,5 +1,6 @@
 const express = require('express')
 const inquirer = require('inquirer');
+const methodOverride = require('method-override');
 const SequelizeSimpleCache = require('sequelize-simple-cache')
 const app = express();
 const port = 3000
@@ -24,6 +25,8 @@ require("./routers/player")(app);
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(methodOverride('X-HTTP-Method-Override'))
+app.use(methodOverride('_method'))
 
 app.listen(port, () => console.log(`Port sur écoute : ${port}`));
 
