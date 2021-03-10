@@ -9,6 +9,17 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false })
 module.exports = app => {
     let router = require('express').Router();
 
+    router.use(function(req, res, next) {
+        if(req.query._method == "DELETE") {
+            req.method = "DELETE";
+            req.url = req.path
+        } else if (req.query._method == "PATCH") {
+            req.method = "PATCH"
+            req.url = req.path
+        }
+        next();
+    })
+
     // Page qui liste les joueurs créées en base de données
     router.get("/players", function(req, res) {
         Player.findAll()
@@ -61,7 +72,7 @@ module.exports = app => {
     });
 
     // Route qui modifie et PATCH un joueur en base de données
-    router.post("/players/:id", jsonParser, urlencodedParser, function(req, res) {
+    router.patch("/players/:id", jsonParser, urlencodedParser, function(req, res) {
         Player.update({
             name: req.body.name,
             email: req.body.email
@@ -76,7 +87,7 @@ module.exports = app => {
     });
 
     // Route qui supprime un joueur en base de données
-    router.post("/players/:id/delete", function(req, res) {
+    router.delete("/players/:id", function(req, res) {
         Player.destroy({
             where: {
                 id: req.params.id

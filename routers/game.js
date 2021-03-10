@@ -1,5 +1,6 @@
 //const cors = require('cors')
 const bodyParser = require('body-parser')
+const methodOverride = require('method-override')
 
 const sequelize = require('sequelize')
 const Game = require('../models').Game
@@ -9,11 +10,24 @@ const Player = require('../models').Player
 
 const troiscentun = require('../engine/gamemodes/301')
 
+// app.use(methodOverride('_method'))
+var test = methodOverride('_method')
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 module.exports = app => {
     let router = require('express').Router();
+
+    router.use(function(req, res, next) {
+        if(req.query._method == "DELETE") {
+            req.method = "DELETE";
+            req.url = req.path
+        } else if (req.query._method == "PATCH") {
+            req.method = "PATCH"
+            req.url = req.path
+        }
+        next();
+    })
 
     router.get('/', function(req, res) {
         res.redirect(303, '/games/')
@@ -53,6 +67,14 @@ module.exports = app => {
     // Page du détail d'une partie
     router.get("/games/:id", jsonParser, urlencodedParser, function(req, res) {
         const passedId = req.params.id
+            Game.update({
+                currentPlayerId: GamePlayer.playerId
+            },
+            {
+                    where: {
+                        id: GamePlayer.gameId
+                    }
+            }),
             Game.findAll({
                 where: { 
                     id: passedId
@@ -82,6 +104,7 @@ module.exports = app => {
                 res.render('games/details.pug', {
                     game: gp,
                     id: passedId,
+                    darts: troiscentun.nbDarts,
                     score: troiscentun.score
                 })
             })
@@ -99,7 +122,7 @@ module.exports = app => {
     });
 
     // Route qui modifie et PATCH en base de données
-    router.post("/games/:id", jsonParser, urlencodedParser, function(req, res) {
+    router.patch("/games/:id", jsonParser, urlencodedParser, function(req, res) {
         Game.update({
             mode: req.body.select,
             name: req.body.name,
@@ -112,7 +135,7 @@ module.exports = app => {
     })
 
     // Route qui supprime la partie en base de données
-    router.post("/games/:id/delete", function(req, res) {        
+    router.delete("/games/:id", jsonParser, urlencodedParser, function(req, res) {        
         Game.destroy({
             force: true,
             where: {
@@ -155,21 +178,25 @@ module.exports = app => {
                 gameId: req.params.id,
                 playerId: req.body.checked[c],
                 remainingShots: troiscentun.nbDarts,
-                score: troiscentun.score
+                score: troiscentun.score,
+                inGame: score=0?false:true
             })
-            .then(function() {
-                let counter = GamePlayer.count({where:{gameId: req.params.id}})
-                counter.then(function(result) {
-                    console.log(result)
-                    let test = encodeURIComponent(result)
-                    res.redirect(303, `/games/${req.params.id}/players/?nbPlayers=${test}`)
+
+            // .then(function(gp) {
+                .then(function() {
+                    res.redirect(303, `/games/${req.params.id}/players`)
                 })
-            })
+                // counter.then(function(result) {
+                //     console.log(result)
+                //     let test = encodeURIComponent(result)
+                //     res.redirect(303, `/games/${req.params.id}/players`)
+                // })
+            // })s
         }
     })
 
     // Supprime un joueur d'une partie en base de données
-    router.post("/games/:id/players/delete", jsonParser, urlencodedParser, function (req, res) {
+    router.delete("/games/:id/players", jsonParser, urlencodedParser, function (req, res) {
         for (let c in req.body.checked) {
             GamePlayer.destroy({
                 force: true,
@@ -190,11 +217,13 @@ module.exports = app => {
 
     // Créer un tir de joueur en base de données avec relation sur la partie
     router.post("/games/:id/shots", jsonParser, urlencodedParser, function (req, res) {
-        let result = troiscentun.shot(req.body.shot)
+        let test = 1
+        let player = troiscentun.shot(req.params.id, req.body.shot, test)
+        console.log("route: " + player)
         GameShot.create({
-            sector: result,
+            sector: req.body.shot,
             gameId: req.params.id,
-            // playerId: 
+            playerId: player
         })
         .then(function(gs) {
             res.redirect(`/games/${gs.gameId}`)
