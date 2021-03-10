@@ -21,11 +21,14 @@ block content
             tr 
                 th Nom 
                 th Ordre 
+                th Darts
                 th Score
             each player in g.GamePlayers
                 tr(style="text-align: center")
                     td= player.Player.name
                     td= player.Player.order 
+                    td= player.remainingShots
+                    td= player.score
                     //- each shot in g.GameShots
                     //-     if shot.playerId === player.Player.id
                     //-         td= score - shot.sector 
@@ -35,7 +38,7 @@ block content
         form(action=`/games/${g.id}/edit`, method="GET")
             input(type="submit" value="Éditer")
         
-        form(action=`/games/${g.id}/delete`, method="POST")
+        form(action=`/games/${g.id}?_method=DELETE`, method="POST")
             input(type="submit" value="Supprimer")
         
         div 

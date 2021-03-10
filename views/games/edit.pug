@@ -6,7 +6,7 @@ block content
 
     h1 Edition d'une partie
 
-    form(action="/games/" + game.id, method="POST")
+    form(action=`/games/${game.id}?_method=PATCH`, method="POST")
         select(name="select" value=`${game.mode}`)
             option(value="301") 301
             option(value="test") test

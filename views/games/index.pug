@@ -23,7 +23,7 @@ block content
                     td
                         form(action=`/games/${game.id}`, method="GET")
                             input(type="submit" value="Détails")
-                        form(action=`/games/${game.id}/delete`, method="POST")
+                        form(action=`/games/${game.id}?_method=DELETE`, method="POST")
                             input(type="submit" value="Supprimer")
                         form(action=`/games/${game.id}`, method="GET")
                             input(type="submit" value="Jouer")

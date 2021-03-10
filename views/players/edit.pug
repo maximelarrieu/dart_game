@@ -6,7 +6,7 @@ block content
 
     h1 Edition d'un joueur
 
-    form(action="/players/" + player.id, method="POST")
+    form(action=`/players/${player.id}?_method=PATCH`, method="POST")
         p 
             | name: 
             input(type="text", required, name="name", value=`${player.name}`)

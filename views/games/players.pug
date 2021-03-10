@@ -11,7 +11,7 @@ block content
             p 0
         else
             p= result
-        form(action=`/games/${id}/players/delete`, method="POST")
+        form(action=`/games/${id}/players?_method=DELETE`, method="POST")
             table(style="width:40%", border=2)
                 tr
                     th Nom 
