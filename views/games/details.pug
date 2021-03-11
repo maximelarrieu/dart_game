@@ -23,7 +23,7 @@ block content
                 th Ordre 
                 th Darts
                 th Score
-            each player in g.GamePlayers
+            each player in players
                 tr(style="text-align: center")
                     td= player.Player.name
                     td= player.Player.order 
