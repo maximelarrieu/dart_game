@@ -3,6 +3,8 @@ const { nbPlayers } = require('../gamemode')
 const GameMode = require('../gamemode')
 const GamePlayer = require('../../models').GamePlayer
 const Player = require('../../models').Player
+const Game = require('../../models').Game
+const GameShot = require('../../models').GameShot
 // const { sequelize } = require('../../models');
 // const sequelize = require('sequelize')
 // let player = new GamePlayer
@@ -13,25 +15,76 @@ class trois_cent_un extends GameMode {
     constructor(name = "301", score = 301, nbDarts, nbPlayers) {
         super(),
         this.name = name,
-        this.score = score
+        this.score = score,
+        this.randomize = this.randomize
     }
-    startGame() {
-        console.log("GO! : " + this.nbPlayers)
-        // Chaque joueur récupéré a 301 points
-        // Chaque joueur lance 3(nbDarts) fleches -> (1 fleche -> entre 1 et 20 x1 x2 ou x3 MAIS AUSSI 25 x2)
-        this.shot()
-    }
-   
-    test(id, scoret, shots) {
+    startGame(id) {
+        return GamePlayer.findAll({
+            where: {
+                gameId: id,
+                inGame: true
+            },
+            include: [
+                {
+                    model: Player
+                }
+            ],
+            raw: true,
+            nest: true
+        })
+        .then((players => {
+            let player = players.map((p) => p.Player)
+            console.log(player)
+            let player_id = player.map((p) => p.id)
+            console.log(player_id)
+            let rand = Math.floor(Math.random() * player_id.length)
+            let current_player = player_id[rand]
+            console.log("cu : " + current_player)
 
+            // Game.update(
+            //     {
+            //     currentPlayerId: current_player
+            //     },
+            //     {
+            //     where: {
+            //         id: id
+            //     },
+            //     raw: true
+            // })
+            // .then((game) => {
+            //     console.log(game)
+            // })
+            return current_player
+        }))
+    }
+
+    randomize(gameplayer, gameid) {
+        console.log("alloo")
+        GamePlayer.findAll({
+            where: {
+                gameId: gameid
+            }
+        })
+        .then((gp) => {
+            let id = gp.map((i) => i)
+            console.log(id)
+            let index = id.indexOf(gameplayer)
+            if (index >= 0 && index < id.length - 1) {
+                let next = id[index + 1]
+                return next
+            }
+            // return next
+        })
     }
 
     // function shot (chaque joueur y passe 3x)
-    shot(id, sector, test) {
+    shot(id, sector, player) {
+        console.log("reçu: " + player)
         // Récupération de la liste des joueurs de la partie
         GamePlayer.findAll({
             where: {
                 gameId: id,
+                playerId: player,
                 inGame: true
             },
             include: [
@@ -45,19 +98,10 @@ class trois_cent_un extends GameMode {
             // On passe l'object reçu
             .then(function (players) {
                 console.log(players)
-                // Récupération de l'id du GamePlayer reçu
-                let player_id = players.map((p) => p.id)
                 // Récupèration du score total du GamePlayer
                 let player_score = players.map((p) => p.score)
                 // Récupération du nombre de tirs restants au joueur
                 let player_shots = players.map((p) => p.remainingShots)
-
-                let player = players.map((p) => p.playerId)
-
-                test = player
-                console.log(test)
-                const result = test
-                console.log(result)
                 // Update du GamePlayer
                 GamePlayer.update({
                     // Soustraction du score total au sector reçu par la route
@@ -67,38 +111,33 @@ class trois_cent_un extends GameMode {
                 },
                 {
                     where: {
-                        id: player_id
+                        playerId: player
                     }
                 })
-
-
-                    // Alors
-                    .then(function () {
-                        // Si un joueur ayant 0 de score est trouvé. Le inGame passe à false
-                        GamePlayer.update({
-                            inGame: false
-                        },
-                        {
+                .then(() => {
+                    GameShot.create({
+                        gameId: id,
+                        sector: sector,
+                        playerId: player
+                    })
+                    .then(() => {
+                        GamePlayer.findAll({
                             where: {
-                                id: player_id,
-                                score: 0
+                                // playerId: gameplayer,
+                                remainingShots: 0
                             }
                         })
-                        // player.update({
-                        //     score: score - scoret,
-                        // })
-                        // .then(function (after) {
-                            console.log("test-------------")
+                        .then((player) => {
+                            console.log("ouais")
                             console.log(player)
-                            
-                        // })
-                    })
-                    console.log("fin:" + result)
-                    return test
-                    
+                            // this.randomize(player)
+                        })
+                    })    
+
+                })
+
             })
             // console.log("end:" + result)
-            return test
         // console.log(player)
         // for (let i in player) {
         //     console.log(player.gameId)
