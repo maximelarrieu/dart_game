@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
   };
   Game.init({
     mode: DataTypes.STRING,
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    status: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Game',

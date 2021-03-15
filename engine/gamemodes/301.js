@@ -40,41 +40,48 @@ class trois_cent_un extends GameMode {
             let rand = Math.floor(Math.random() * player_id.length)
             let current_player = player_id[rand]
             console.log("cu : " + current_player)
-
-            // Game.update(
-            //     {
-            //     currentPlayerId: current_player
-            //     },
-            //     {
-            //     where: {
-            //         id: id
-            //     },
-            //     raw: true
-            // })
-            // .then((game) => {
-            //     console.log(game)
-            // })
             return current_player
         }))
     }
 
-    randomize(gameplayer, gameid) {
+    randomize(gameId, currentPlayerId) {
         console.log("alloo")
-        GamePlayer.findAll({
-            where: {
-                gameId: gameid
-            }
+        return GamePlayer.findAll({
+            where: {gameId: gameId}
         })
         .then((gp) => {
-            let id = gp.map((i) => i)
-            console.log(id)
-            let index = id.indexOf(gameplayer)
-            if (index >= 0 && index < id.length - 1) {
-                let next = id[index + 1]
-                return next
+            let all = gp.map((i) => i.playerId)
+            let rand = Math.floor(Math.random() * all.length)
+            let new_player = all[rand]
+            if(new_player == currentPlayerId) {
+                console.log(new_player)
+                console.log(currentPlayerId)
+                console.log(new_player == currentPlayerId)
+                console.log("oupsi")
+                this.randomize(gameId, currentPlayerId)
+            } else {
+                console.log("IN ELSE")
+                console.log(new_player)
+                console.log(currentPlayerId)
+                return new_player
             }
-            // return next
         })
+
+        // GamePlayer.findAll({
+        //     where: {
+        //         gameId: gameid
+        //     }
+        // })
+        // .then((gp) => {
+        //     let id = gp.map((i) => i)
+        //     console.log(id)
+        //     let index = id.indexOf(gameplayer)
+        //     if (index >= 0 && index < id.length - 1) {
+        //         let next = id[index + 1]
+        //         return next
+        //     }
+            // return next
+        // })
     }
 
     // function shot (chaque joueur y passe 3x)
@@ -120,20 +127,33 @@ class trois_cent_un extends GameMode {
                         sector: sector,
                         playerId: player
                     })
-                    .then(() => {
-                        GamePlayer.findAll({
-                            where: {
-                                // playerId: gameplayer,
-                                remainingShots: 0
-                            }
-                        })
-                        .then((player) => {
-                            console.log("ouais")
-                            console.log(player)
-                            // this.randomize(player)
-                        })
-                    })    
-
+                    GamePlayer.findByPk(player, {})
+                    .then((gp) => {
+                        let score = gp.score
+                        console.log("SCOOOOORE")
+                        console.log(gp.score)
+                        if (score == 0) {
+                            console.log("WIIIIIIIIIIIIIIIIIN!")
+                            GamePlayer.update({
+                                inGame: false
+                            },
+                            {
+                                where: {
+                                    playerId: player
+                                }
+                            })
+                        } else if (score < 0) {
+                            console.log("COOOOOOOOOOOOOOOOOON")
+                            GamePlayer.update({
+                                score: score + sector
+                            },
+                            {
+                                where: {
+                                    playerId: player
+                                }
+                            })
+                        }
+                    })
                 })
 
             })
@@ -168,6 +188,38 @@ class trois_cent_un extends GameMode {
     //     console.log(`${winner} a gagné !`)
     // }
     // ....
+    // checkDarts(current) {
+    //     GamePlayer.findAll({
+    //         where: {
+    //             gameId: id
+    //         }
+    //     })
+    //     })
+    //     .then((gp) => {
+    //         console.log("Tous les joueurs récupérés")
+    //         console.log(gp)
+    //         let all = gp.map((i) => i.playerId)
+    //         console.log(all)
+    //         let rand = Math.floor(Math.random() * all.length)
+    //         let new_current = all[rand]
+    //         Game.update(
+    //         {
+    //             currentPlayerId: new_current
+    //         },
+    //         {
+    //             where: {id: id}
+    //         },)
+    //         GamePlayer.update({
+    //             remainingShots: 3
+    //         },
+    //         {
+    //             where: {
+    //                 id: currentplayer,
+    //                 remainingShots: 0
+    //             }
+    //         })
+    //     })
+    // }
+    
 }
-
 module.exports = new trois_cent_un()

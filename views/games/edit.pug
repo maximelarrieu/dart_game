@@ -13,4 +13,8 @@ block content
         p 
             | name: 
             input(type="text", required, name="name", value=`${game.name}`)
+        select(name="status" value=`${game.status}`)
+            option(value="drafted") Brouillon
+            option(value="started") Démarée
+        p
         input(type="submit" value="Editer")

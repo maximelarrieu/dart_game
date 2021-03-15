@@ -14,6 +14,7 @@ module.exports = {
     return queryInterface.bulkInsert('Games', [{
       name: 'The game',
       mode: '301',
+      status: 'drafted',
       createdAt: new Date(),
       updatedAt: new Date()
     }]);

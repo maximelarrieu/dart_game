@@ -57,7 +57,8 @@ module.exports = app => {
     router.post("/games", jsonParser, urlencodedParser, function(req, res) {
         Game.create({
             mode: req.body.select,
-            name: req.body.name
+            name: req.body.name,
+            status: 'draft'
           })
           .then(function (game) {
             res.redirect(`/games/${game.id}`)
@@ -67,10 +68,7 @@ module.exports = app => {
     // Page du détail d'une partie
     router.get("/games/:id", jsonParser, urlencodedParser, function(req, res) {
         const passedId = req.params.id
-            Game.findAll({
-                where: { 
-                    id: passedId
-                },
+            Game.findByPk(passedId, {
                 include: [
                 {
                     model: GamePlayer,
@@ -82,6 +80,8 @@ module.exports = app => {
                         model: Player,
                         required: false,
                     }],
+                    raw:true,
+                    nest:true
                 },
                 {
                     model: GameShot,
@@ -91,55 +91,72 @@ module.exports = app => {
                     required: false
                 },
             ],
-            raw: true,
+            // raw: true,
             nest: true
             })
-            .then(function (gp) {
-                console.log(gp)
-                let current_player = gp.map((p) => p.currentPlayerId)
-                let players = gp.map((p) => p.GamePlayers)
-                let shots = players.map((g) => g.remainingShots)
-                console.log(current_player)
-                console.log("shots: " + shots)
-                console.log(players.remainingShots)
-                GamePlayer.findAll({
-                    where: {
-                        playerId: current_player
-                    }
-                })
-                .then((gp) => {
-                    console.log("GP RECUP")
-                    console.log(gp)
-                    let id = gp.map((i) => i.id)
-                    let gameid = gp.map((g) => g.gameId)
-                    let shots = gp.map((s) => s.remainingShots)
-                    // let test = shots.map((s) => s)
-                    // console.log(test)
-                    if (shots == 0) {
-                        console.log("FINIIII")
-                        let player = gp.map((p) => p)
-                        console.log(player)
-                        let player_id = player.map((p) => p.playerId)
-                        console.log(player_id)
-                        let rand = Math.floor(Math.random() * player_id.length - id)
-                        let new_player = player_id[rand]
-                        console.log("cu : " + new_player)
-                        // troiscentun.randomize(id, gameid).then(response => {
-                            Game.update({
-                                currentPlayerId: new_player
-                            }, {
-                                where: {id: gameid}
-                            })
-                        // })
-                    }
-                })
-                res.render('games/details.pug', {
-                        game: gp,
-                        id: passedId,
-                        darts: troiscentun.nbDarts,
-                        score: troiscentun.score,
-                        players: players
+            .then(function (g) {
+                console.log(g)
+                let name = g.name
+                let mode = g.mode
+                let gameplayers = g.GamePlayers
+                let currentPlayerId = g.currentPlayerId
+                
+                if (currentPlayerId != null) {
+                    Player.findByPk(currentPlayerId, {})
+                    .then((p) => {
+                        console.log("JOUEUR CURRENT")
+                        console.log(p)
+                        let current_name = p.name
+                        res.render('games/details.pug', {
+                            game: g,
+                            id: passedId,
+                            name: name,
+                            mode: mode,
+                            gameplayers: gameplayers,
+                            currentPlayerId: currentPlayerId,
+                            current_name: current_name
+                        })
                     })
+                    GamePlayer.findOne({
+                        where: {playerId: currentPlayerId}
+                    })
+                    .then((current) => {
+                        let nbDarts = current.remainingShots
+                        let score = current.score
+                        console.log(nbDarts)
+                        if (nbDarts == 0) {
+                            console.log("UH OH")
+                            console.log(troiscentun.randomize(g.id))
+                            troiscentun.randomize(g.id, currentPlayerId).then(response => {
+                                Game.update({
+                                    currentPlayerId: response
+                                },
+                                {
+                                    where: {
+                                        id: g.id
+                                    }
+                                })
+                                GamePlayer.update({
+                                    remainingShots: 3
+                                },
+                                {
+                                    where: {
+                                        playerId: currentPlayerId
+                                    }
+                                })
+                            })
+                        }
+                    })
+                } else {
+                    res.render('games/details.pug', {
+                        game: g,
+                        id: passedId,
+                        name: name,
+                        mode: mode,
+                        gameplayers: gameplayers,
+                        currentPlayerId: currentPlayerId,
+                    })
+                }
             })
     });
 
@@ -159,6 +176,7 @@ module.exports = app => {
         Game.update({
             mode: req.body.select,
             name: req.body.name,
+            status: req.body.status
         },  {
             where: {id:req.params.id},
         })
@@ -219,6 +237,7 @@ module.exports = app => {
 
             // .then(function(gp) {
                 .then(function() {
+                    Game.findByPk(req.params.id, {})
                     troiscentun.startGame(req.params.id).then(response => {
                         Game.update({
                             currentPlayerId: response
