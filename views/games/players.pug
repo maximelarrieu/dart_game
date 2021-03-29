@@ -7,22 +7,19 @@ block content
        p Pas de joueurs trouvés
     else
         p Participant(s)
-        if !result
-            p 0
-        else
-            p= result
         form(action=`/games/${id}/players?_method=DELETE`, method="POST")
             table(style="width:40%", border=2)
                 tr
                     th Nom 
                     th Email 
                     th Actions 
-                each player in players
-                    if player.GamePlayers.length != 0
-                        // && player.GamePlayers.gameId === id 
+                if gameplayers.length === 0
+                    p Aucun joueur inscrit 
+                else
+                    each player in gameplayers
                         tr(style="text-align: center") 
-                            td= player.name 
-                            td= player.email
+                            td= player.Player.name 
+                            td= player.Player.email
                             td
                                 input(type="checkbox", name="checked" value=player.id)
             input(type="submit" value="Retirer")

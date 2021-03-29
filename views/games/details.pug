@@ -63,10 +63,20 @@ block content
                     p Aucun joueur n'a rejoint la partie
 
                 form(action=`/games/${id}/shots`, method="POST")
+                    p Secteur
                     - let index = 1
                     while index <= 20
-                        input(type="submit", name="shot", value=index++)
-                    input(type="submit", name="shot", value=25)
+                        label= index
+                        input(type="radio", name="shot", value=index++)
+                    label 25
+                    input(type="radio", name="shot", value=25)
+                    p Multiplicateur
+                    - let jindex = 1
+                    while jindex <= 3
+                        label= jindex
+                        input(type="radio", name="multiplicator", value=jindex++)
+                    p
+                    input(type="submit", value="Tirer!")
             else
                 p Il faut au moins 2 joueurs pour lancer la partie
 

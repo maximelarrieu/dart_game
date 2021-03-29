@@ -47,7 +47,10 @@ class trois_cent_un extends GameMode {
     randomize(gameId, currentPlayerId) {
         console.log("alloo")
         return GamePlayer.findAll({
-            where: {gameId: gameId}
+            where: {
+                gameId: gameId,
+                inGame: true
+            }
         })
         .then((gp) => {
             let all = gp.map((i) => i.playerId)
@@ -85,7 +88,7 @@ class trois_cent_un extends GameMode {
     }
 
     // function shot (chaque joueur y passe 3x)
-    shot(id, sector, player) {
+    shot(id, sector, multiplicator, player) {
         console.log("reçu: " + player)
         // Récupération de la liste des joueurs de la partie
         GamePlayer.findAll({
@@ -112,7 +115,7 @@ class trois_cent_un extends GameMode {
                 // Update du GamePlayer
                 GamePlayer.update({
                     // Soustraction du score total au sector reçu par la route
-                    score: player_score - sector,
+                    score: player_score - (sector * multiplicator),
                     // On décrémente son nombre de tir
                     remainingShots: player_shots - 1,
                 },
@@ -125,35 +128,42 @@ class trois_cent_un extends GameMode {
                     GameShot.create({
                         gameId: id,
                         sector: sector,
+                        multiplicator: multiplicator,
                         playerId: player
                     })
-                    GamePlayer.findByPk(player, {})
-                    .then((gp) => {
-                        let score = gp.score
-                        console.log("SCOOOOORE")
-                        console.log(gp.score)
-                        if (score == 0) {
-                            console.log("WIIIIIIIIIIIIIIIIIN!")
-                            GamePlayer.update({
-                                inGame: false
-                            },
-                            {
-                                where: {
-                                    playerId: player
-                                }
-                            })
-                        } else if (score < 0) {
-                            console.log("COOOOOOOOOOOOOOOOOON")
-                            GamePlayer.update({
-                                score: score + sector
-                            },
-                            {
-                                where: {
-                                    playerId: player
-                                }
-                            })
-                        }
+                    .then(() => {
+                        GamePlayer.findByPk(player)
+                        .then((gp) => {
+                            let score = gp.score
+                            console.log("SCOOOOORE")
+                            console.log(gp.score)
+                            if (score == 0) {
+                                console.log("WIIIIIIIIIIIIIIIIIN!")
+                                GamePlayer.update({
+                                    inGame: false
+                                },
+                                {
+                                    where: {
+                                        playerId: player
+                                    }
+                                })
+                                .then(() => {
+                                    this.randomize(gp.gameId, gp.id)
+                                })
+                            } else if (score < 0) {
+                                console.log("COOOOOOOOOOOOOOOOOON")
+                                GamePlayer.update({
+                                    score: score + (sector * multiplicator)
+                                },
+                                {
+                                    where: {
+                                        playerId: player
+                                    }
+                                })
+                            }
+                        })
                     })
+                    
                 })
 
             })

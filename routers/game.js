@@ -211,11 +211,25 @@ module.exports = app => {
             }]
         })
         .then(function(players) {
-            res.render('games/players.pug', {
-                players: players,
-                id: id,
-                result: req.query.nbPlayers
+            GamePlayer.findAll({
+                where: {
+                    gameId: id
+                },
+                include: [{
+                    model: Player
+                }],
+                raw: true,
+                nest: true
             })
+            .then( (gameplayers) => {
+                res.render('games/players.pug', {
+                    players: players,
+                    gameplayers: gameplayers,
+                    id: id,
+                    result: req.query.nbPlayers
+                })
+            })
+
         })
     })
 
@@ -224,10 +238,10 @@ module.exports = app => {
         for (let c in req.body.checked) {
             GamePlayer.create({
                 include: [
-                    {
+                   {
                         model: Player
                     }
-            ],
+            ], 
                 gameId: req.params.id,
                 playerId: req.body.checked[c],
                 remainingShots: troiscentun.nbDarts,
@@ -290,7 +304,7 @@ module.exports = app => {
             .then(function(gs) {
                 console.log(gs)
                 let player = gs.currentPlayerId
-                troiscentun.shot(req.params.id, req.body.shot, gs.currentPlayerId)
+                troiscentun.shot(req.params.id, req.body.shot, req.body.multiplicator, gs.currentPlayerId)
                 // troiscentun.randomize(gs.playerId)
                 res.redirect(`/games/${req.params.id}`)
             })
