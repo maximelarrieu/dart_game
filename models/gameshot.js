@@ -1,27 +1,47 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class GameShot extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      GameShot.belongsTo(models.Game, {foreignKey: "gameId"}),
-      GameShot.belongsTo(models.Player, {foreignKey: "playerId"})
-    }
-  };
-  GameShot.init({
-    multiplicator: DataTypes.INTEGER,
-    sector: DataTypes.INTEGER
-  }, {
-    sequelize,
-    modelName: 'GameShot',
-  });
+const mongoose = require('mongoose');
+
+const GameShotSchema = new mongoose.Schema({
+  multiplicator : {
+    type : INTEGER
+  },
+  sector : {
+    type : INTEGER
+  },
+  PlayerId : [
+    {type: mongoose.Schema.Types.ObjectId,ref:'Player'}
+  ],
+  gameId: [
+    {type: mongoose.Schema.Types.ObjectId,ref:'Game'}
+  ]
+})
+
+module.exports = mongoose.model('GameShot', GameSchema);
+
+
+// 'use strict';
+// const {
+//   Model
+// } = require('sequelize');
+// module.exports = (sequelize, DataTypes) => {
+//   class GameShot extends Model {
+//     /**
+//      * Helper method for defining associations.
+//      * This method is not a part of Sequelize lifecycle.
+//      * The `models/index` file will call this method automatically.
+//      */
+//     static associate(models) {
+//       GameShot.belongsTo(models.Game, {foreignKey: "gameId"}),
+//       GameShot.belongsTo(models.Player, {foreignKey: "playerId"})
+//     }
+//   };
+//   GameShot.init({
+//     multiplicator: DataTypes.INTEGER,
+//     sector: DataTypes.INTEGER
+//   }, {
+//     sequelize,
+//     modelName: 'GameShot',
+//   });
   
-  // GameShot.sync({force:true})
-  return GameShot;
-};
+//   // GameShot.sync({force:true})
+//   return GameShot;
+// };
