@@ -140,15 +140,14 @@ class trois_cent_un extends GameMode {
                             if (score == 0) {
                                 console.log("WIIIIIIIIIIIIIIIIIN!")
                                 GamePlayer.update({
-                                    inGame: false
-                                },
+                                    inGame: false                                },
                                 {
                                     where: {
                                         playerId: player
                                     }
                                 })
                                 .then(() => {
-                                    this.randomize(gp.gameId, gp.id)
+                                    trois_cent_un.randomize(gp.gameId, gp.id)
                                 })
                             } else if (score < 0) {
                                 console.log("COOOOOOOOOOOOOOOOOON")

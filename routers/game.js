@@ -98,6 +98,7 @@ module.exports = app => {
                 console.log(g)
                 let name = g.name
                 let mode = g.mode
+                let status = g.status
                 let gameplayers = g.GamePlayers
                 let currentPlayerId = g.currentPlayerId
                 
@@ -146,6 +147,24 @@ module.exports = app => {
                                 })
                             })
                         }
+                        GamePlayer.findAll({
+                            where: {
+                                gameId: g.id
+                            }
+                        })
+                        .then((gp) => {
+                            let score = gp.map((t) => t.score)
+                            if (score.every(item => item === 0)) {
+                                console.log("END")
+                                Game.update({
+                                    status: 'ended',   
+                                },
+                                {where: {
+                                    id: g.id
+                                }
+                                })
+                            }
+                        })
                     })
                 } else {
                     res.render('games/details.pug', {
@@ -153,6 +172,7 @@ module.exports = app => {
                         id: passedId,
                         name: name,
                         mode: mode,
+                        status: status,
                         gameplayers: gameplayers,
                         currentPlayerId: currentPlayerId,
                     })
