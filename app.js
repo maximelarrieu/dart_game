@@ -21,6 +21,7 @@ cache.clear()
 
 require("./routers/game")(app);
 require("./routers/player")(app);
+require("./routers/gameplayers")(app);
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))

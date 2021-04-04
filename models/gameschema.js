@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema
+console.log(Schema.Types.ObjectId)
 
 const GameSchema = new mongoose.Schema({
   name : {
@@ -11,6 +13,12 @@ const GameSchema = new mongoose.Schema({
     required: true,
     lowercase: true,
   },
+  status : {
+    type: String,
+    required: true,
+    lowercase: true
+  },
+  gameplayers: [{type: Schema.Types.ObjectId, ref: 'GamePlayer'}]
   // currentPlayerId : [
   //   {type: mongoose.Schema.Types.ObjectId,ref:'Player'}
   // ],
@@ -22,7 +30,7 @@ const GameSchema = new mongoose.Schema({
   // ]
 })
 
-const GameModel = mongoose.model('GameModel', GameSchema)
+const GameModel = mongoose.model('Game', GameSchema)
 
 module.exports = GameModel
 

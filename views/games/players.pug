@@ -3,6 +3,8 @@ extends skeleton.pug
 block content 
     h1 Liste des joueurs de la partie 
 
+    p= game.name
+
     if players.length === 0
        p Pas de joueurs trouvés
     else
@@ -17,28 +19,28 @@ block content
                     p Aucun joueur inscrit 
                 else
                     each player in gameplayers
+                        //- each p in player.playerId
                         tr(style="text-align: center") 
-                            td= player.Player.name 
-                            td= player.Player.email
+                            td= player.playerId.name
+                            td= player.playerId.email
                             td
-                                input(type="checkbox", name="checked" value=player.id)
+                                input(type="checkbox", name="playerId" value=player.playerId.id)
             input(type="submit" value="Retirer")
         p Reste des joueurs
-        form(action=`/games/${id}/players/`, method="POST")
+        form(action=`/games/${game._id}/players/`, method="POST")
             table(style="width:40%", border=2)
                 tr
                     th Nom 
                     th Email 
                     th Actions 
                 each player in players
-                    if player.GamePlayers.length === 0
-                        tr(style="text-align: center") 
-                            td= player.name 
-                            td= player.email
-                            td
-                                input(type="checkbox", name="checked" value=player.id)             
+                    tr(style="text-align: center") 
+                        td= player.name 
+                        td= player.email
+                        td
+                            input(type="checkbox", name="playerId" value=player.id)             
             input(type="submit" value="Ajouter")
 
     p
-        a(href=`/games/${id}`) Retour au détails de la partie
+        a(href=`/games/${game._id}`) Retour au détails de la partie
     

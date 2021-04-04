@@ -41,152 +41,142 @@ module.exports = app => {
     router.get("/games", gamecontroller.getGames);
 
     // Page de formulaire de création d'une partie
-    router.get("/games/new", jsonParser, urlencodedParser, function(req, res) {
-        console.log(req.body.select)
-        res.render('games/new.pug', {
-            game: Game
-        })
+    router.get("/games/new", function(req, res) {
+        res.render('games/new.pug')
     });
 
-    router.post('/add/games', jsonParser, urlencodedParser, gamecontroller.addGame)
+    router.post('/games', jsonParser, urlencodedParser, gamecontroller.addGame)
     // Route qui crée la partie et l'enregistre en base de données
-    router.post("/games", jsonParser, urlencodedParser, function(req, res) {
-        Game.create({
-            mode: req.body.select,
-            name: req.body.name,
-            status: 'draft'
-          })
-          .then(function (game) {
-            res.redirect(`/games/${game.id}`)
-          });
-    });
+    // router.post("/games", jsonParser, urlencodedParser, function(req, res) {
+    //     Game.create({
+    //         mode: req.body.select,
+    //         name: req.body.name,
+    //         status: 'draft'
+    //       })
+    //       .then(function (game) {
+    //         res.redirect(`/games/${game.id}`)
+    //       });
+    // });
 
     // Page du détail d'une partie
-    router.get("/games/:id", jsonParser, urlencodedParser, function(req, res) {
-        const passedId = req.params.id
-            Game.findByPk(passedId, {
-                include: [
-                {
-                    model: GamePlayer,
-                    where: {
-                        gameId: passedId
-                    },
-                    required: false,
-                    include: [{
-                        model: Player,
-                        required: false,
-                    }],
-                    raw:true,
-                    nest:true
-                },
-                {
-                    model: GameShot,
-                    where: {
-                        gameId: passedId
-                    },
-                    required: false
-                },
-            ],
-            // raw: true,
-            nest: true
-            })
-            .then(function (g) {
-                console.log(g)
-                let name = g.name
-                let mode = g.mode
-                let status = g.status
-                let gameplayers = g.GamePlayers
-                let currentPlayerId = g.currentPlayerId
+    router.get("/games/:id", gamecontroller.getGame)
+
+    // router.get("/games/:id", jsonParser, urlencodedParser, function(req, res) {
+    //     const passedId = req.params.id
+    //         Game.findByPk(passedId, {
+    //             include: [
+    //             {
+    //                 model: GamePlayer,
+    //                 where: {
+    //                     gameId: passedId
+    //                 },
+    //                 required: false,
+    //                 include: [{
+    //                     model: Player,
+    //                     required: false,
+    //                 }],
+    //                 raw:true,
+    //                 nest:true
+    //             },
+    //             {
+    //                 model: GameShot,
+    //                 where: {
+    //                     gameId: passedId
+    //                 },
+    //                 required: false
+    //             },
+    //         ],
+    //         // raw: true,
+    //         nest: true
+    //         })
+    //         .then(function (g) {
+    //             console.log(g)
+    //             let name = g.name
+    //             let mode = g.mode
+    //             let status = g.status
+    //             let gameplayers = g.GamePlayers
+    //             let currentPlayerId = g.currentPlayerId
                 
-                if (currentPlayerId != null) {
-                    Player.findByPk(currentPlayerId, {})
-                    .then((p) => {
-                        console.log("JOUEUR CURRENT")
-                        console.log(p)
-                        let current_name = p.name
-                        res.render('games/details.pug', {
-                            game: g,
-                            id: passedId,
-                            name: name,
-                            mode: mode,
-                            gameplayers: gameplayers,
-                            currentPlayerId: currentPlayerId,
-                            current_name: current_name
-                        })
-                    })
-                    GamePlayer.findOne({
-                        where: {playerId: currentPlayerId}
-                    })
-                    .then((current) => {
-                        let nbDarts = current.remainingShots
-                        let score = current.score
-                        console.log(nbDarts)
-                        if (nbDarts == 0) {
-                            console.log("UH OH")
-                            console.log(troiscentun.randomize(g.id))
-                            troiscentun.randomize(g.id, currentPlayerId).then(response => {
-                                Game.update({
-                                    currentPlayerId: response
-                                },
-                                {
-                                    where: {
-                                        id: g.id
-                                    }
-                                })
-                                GamePlayer.update({
-                                    remainingShots: 3
-                                },
-                                {
-                                    where: {
-                                        playerId: currentPlayerId
-                                    }
-                                })
-                            })
-                        }
-                        GamePlayer.findAll({
-                            where: {
-                                gameId: g.id
-                            }
-                        })
-                        .then((gp) => {
-                            let score = gp.map((t) => t.score)
-                            if (score.every(item => item === 0)) {
-                                console.log("END")
-                                Game.update({
-                                    status: 'ended',   
-                                },
-                                {where: {
-                                    id: g.id
-                                }
-                                })
-                            }
-                        })
-                    })
-                } else {
-                    res.render('games/details.pug', {
-                        game: g,
-                        id: passedId,
-                        name: name,
-                        mode: mode,
-                        status: status,
-                        gameplayers: gameplayers,
-                        currentPlayerId: currentPlayerId,
-                    })
-                }
-            })
-    });
-    // router.get("/games/:id", gamecontroller.getGame)
+    //             if (currentPlayerId != null) {
+    //                 Player.findByPk(currentPlayerId, {})
+    //                 .then((p) => {
+    //                     console.log("JOUEUR CURRENT")
+    //                     console.log(p)
+    //                     let current_name = p.name
+    //                     res.render('games/details.pug', {
+    //                         game: g,
+    //                         id: passedId,
+    //                         name: name,
+    //                         mode: mode,
+    //                         gameplayers: gameplayers,
+    //                         currentPlayerId: currentPlayerId,
+    //                         current_name: current_name
+    //                     })
+    //                 })
+    //                 GamePlayer.findOne({
+    //                     where: {playerId: currentPlayerId}
+    //                 })
+    //                 .then((current) => {
+    //                     let nbDarts = current.remainingShots
+    //                     let score = current.score
+    //                     console.log(nbDarts)
+    //                     if (nbDarts == 0) {
+    //                         console.log("UH OH")
+    //                         console.log(troiscentun.randomize(g.id))
+    //                         troiscentun.randomize(g.id, currentPlayerId).then(response => {
+    //                             Game.update({
+    //                                 currentPlayerId: response
+    //                             },
+    //                             {
+    //                                 where: {
+    //                                     id: g.id
+    //                                 }
+    //                             })
+    //                             GamePlayer.update({
+    //                                 remainingShots: 3
+    //                             },
+    //                             {
+    //                                 where: {
+    //                                     playerId: currentPlayerId
+    //                                 }
+    //                             })
+    //                         })
+    //                     }
+    //                     GamePlayer.findAll({
+    //                         where: {
+    //                             gameId: g.id
+    //                         }
+    //                     })
+    //                     .then((gp) => {
+    //                         let score = gp.map((t) => t.score)
+    //                         if (score.every(item => item === 0)) {
+    //                             console.log("END")
+    //                             Game.update({
+    //                                 status: 'ended',   
+    //                             },
+    //                             {where: {
+    //                                 id: g.id
+    //                             }
+    //                             })
+    //                         }
+    //                     })
+    //                 })
+    //             } else {
+    //                 res.render('games/details.pug', {
+    //                     game: g,
+    //                     id: passedId,
+    //                     name: name,
+    //                     mode: mode,
+    //                     status: status,
+    //                     gameplayers: gameplayers,
+    //                     currentPlayerId: currentPlayerId,
+    //                 })
+    //             }
+    //         })
+    // });
 
     // Page du formulaire d'édition d'une partie
-    router.get("/games/:id/edit", function(req, res) {
-        const id = req.params.id
-        Game.findByPk(id)
-            .then(function (game) {
-                res.render('games/edit.pug', {
-                    game: game
-                })
-            })
-    });
+    router.get("/games/:id/edit", gamecontroller.toEditGame);
 
     // Route qui modifie et PATCH en base de données
     router.patch("/games/:id", jsonParser, urlencodedParser, function(req, res) {
@@ -216,82 +206,83 @@ module.exports = app => {
     })
 
     // Page qui liste les joueurs et permet de les ajouter à une partie
-    router.get("/games/:id/players", function (req, res) {
-        const id = req.params.id
-        Player.findAll({
-            include: [{
-                model: GamePlayer,
-                include: {
-                    model: Game,
-                    attributes: ['id']
-                }
-            }]
-        })
-        .then(function(players) {
-            GamePlayer.findAll({
-                where: {
-                    gameId: id
-                },
-                include: [{
-                    model: Player
-                }],
-                raw: true,
-                nest: true
-            })
-            .then( (gameplayers) => {
-                res.render('games/players.pug', {
-                    players: players,
-                    gameplayers: gameplayers,
-                    id: id,
-                    result: req.query.nbPlayers
-                })
-            })
 
-        })
-    })
+    // router.get("/games/:id/players", function (req, res) {
+    //     const id = req.params.id
+    //     Player.findAll({
+    //         include: [{
+    //             model: GamePlayer,
+    //             include: {
+    //                 model: Game,
+    //                 attributes: ['id']
+    //             }
+    //         }]
+    //     })
+    //     .then(function(players) {
+    //         GamePlayer.findAll({
+    //             where: {
+    //                 gameId: id
+    //             },
+    //             include: [{
+    //                 model: Player
+    //             }],
+    //             raw: true,
+    //             nest: true
+    //         })
+    //         .then( (gameplayers) => {
+    //             res.render('games/players.pug', {
+    //                 players: players,
+    //                 gameplayers: gameplayers,
+    //                 id: id,
+    //                 result: req.query.nbPlayers
+    //             })
+    //         })
+
+    //     })
+    // })
 
     // Créer et enregistre les relations entre joueurs et parties
-    router.post("/games/:id/players/", jsonParser, urlencodedParser, function (req, res) {
-        for (let c in req.body.checked) {
-            GamePlayer.create({
-                include: [
-                   {
-                        model: Player
-                    }
-            ], 
-                gameId: req.params.id,
-                playerId: req.body.checked[c],
-                remainingShots: troiscentun.nbDarts,
-                score: troiscentun.score,
-                inGame: true
-            })
+    // router.post("/games/:id/players/", jsonParser, urlencodedParser, function (req, res) {
+    //     for (let c in req.body.checked) {
+    //         GamePlayer.create({
+    //             include: [
+    //                {
+    //                     model: Player
+    //                 }
+    //         ], 
+    //             gameId: req.params.id,
+    //             playerId: req.body.checked[c],
+    //             remainingShots: troiscentun.nbDarts,
+    //             score: troiscentun.score,
+    //             inGame: true
+    //         })
 
-            // .then(function(gp) {
-                .then(function() {
-                    Game.findByPk(req.params.id, {})
-                    troiscentun.startGame(req.params.id).then(response => {
-                        Game.update({
-                            currentPlayerId: response
-                        },
-                        {
-                            where: {
-                                id: req.params.id
-                            }
-                        })
-                        .then(function() {
-                            res.redirect(303, `/games/${req.params.id}/players`)
-                        })
-                    })
+    //         // .then(function(gp) {
+    //             .then(function() {
+    //                 Game.findByPk(req.params.id, {})
+    //                 troiscentun.startGame(req.params.id).then(response => {
+    //                     Game.update({
+    //                         currentPlayerId: response
+    //                     },
+    //                     {
+    //                         where: {
+    //                             id: req.params.id
+    //                         }
+    //                     })
+    //                     .then(function() {
+    //                         res.redirect(303, `/games/${req.params.id}/players`)
+    //                     })
+    //                 })
                     
-                })
-                // counter.then(function(result) {
-                //     console.log(result)
-                //     let test = encodeURIComponent(result)
-                //     res.redirect(303, `/games/${req.params.id}/players`)
-                // })
-            // })s
-        }
-    })
+    //             })
+    //             // counter.then(function(result) {
+    //             //     console.log(result)
+    //             //     let test = encodeURIComponent(result)
+    //             //     res.redirect(303, `/games/${req.params.id}/players`)
+    //             // })
+    //         // })s
+    //     }
+    // })
 
     // Supprime un joueur d'une partie en base de données
     router.delete("/games/:id/players", jsonParser, urlencodedParser, function (req, res) {

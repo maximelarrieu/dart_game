@@ -16,12 +16,12 @@ const GamePlayerSchema = new mongoose.Schema({
   inGame : {
     type : Boolean,
   },
-  playerId : [
+  playerId : 
     {type: mongoose.Schema.Types.ObjectId,ref:'Player'}
-  ],
-  gameId: [
+  ,
+  gameId: 
     {type: mongoose.Schema.Types.ObjectId,ref:'Game'}
-  ],
+  ,
 })
 module.exports = mongoose.model('GamePlayer', GamePlayerSchema);
 

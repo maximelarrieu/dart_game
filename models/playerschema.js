@@ -16,12 +16,12 @@ const PlayerSchema = new mongoose.Schema({
   currentPlayerId : [
     {type: mongoose.Schema.Types.ObjectId,ref:'Game'}
   ],
-  playerId: [
+  gameplayers: [
     {type: mongoose.Schema.Types.ObjectId,ref:'GamePlayer'}
   ],
-  playerId: [
-    {type: mongoose.Schema.Types.ObjectId,ref:'GameShot'}
-  ]
+  // playerId: [
+  //   {type: mongoose.Schema.Types.ObjectId,ref:'GameShot'}
+  // ]
 })
 
 module.exports = mongoose.model('Player', PlayerSchema);
