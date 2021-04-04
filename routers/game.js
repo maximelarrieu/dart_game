@@ -1,4 +1,6 @@
 //const cors = require('cors')
+const gamecontroller = require('../controllers/game')
+
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override')
 
@@ -7,6 +9,7 @@ const Game = require('../models').Game
 const GamePlayer = require('../models').GamePlayer
 const GameShot = require('../models').GameShot
 const Player = require('../models').Player
+
 
 const troiscentun = require('../engine/gamemodes/301')
 
@@ -35,15 +38,7 @@ module.exports = app => {
     })
 
     // Route qui liste toutes les parties créées
-    router.get("/games", function(req, res) {
-        Game.findAll()
-            .then(function (games) {
-                res.render('games/index.pug', {
-                    title: 'Parties',
-                    games: games
-                })
-            })
-    });
+    router.get("/games", gamecontroller.getGames);
 
     // Page de formulaire de création d'une partie
     router.get("/games/new", jsonParser, urlencodedParser, function(req, res) {
@@ -53,6 +48,7 @@ module.exports = app => {
         })
     });
 
+    router.post('/add/games', jsonParser, urlencodedParser, gamecontroller.addGame)
     // Route qui crée la partie et l'enregistre en base de données
     router.post("/games", jsonParser, urlencodedParser, function(req, res) {
         Game.create({
@@ -179,6 +175,7 @@ module.exports = app => {
                 }
             })
     });
+    // router.get("/games/:id", gamecontroller.getGame)
 
     // Page du formulaire d'édition d'une partie
     router.get("/games/:id/edit", function(req, res) {

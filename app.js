@@ -1,11 +1,10 @@
 const express = require('express')
-const inquirer = require('inquirer');
 const methodOverride = require('method-override');
 const SequelizeSimpleCache = require('sequelize-simple-cache')
 const app = express();
 const port = 3000
 const bodyParser = require('body-parser');
-
+const mongoose = require('mongoose')
 const GameMode = require('./engine/gamemode');
 const trois_cent_un = require('./engine/gamemodes/301');
 const GameMode301 = require('./engine/gamemodes/301');
@@ -27,6 +26,12 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(methodOverride('X-HTTP-Method-Override'))
 app.use(methodOverride('_method'))
+
+mongoose.connect("mongodb+srv://root:root@cluster0.rkruo.mongodb.net/node_dart_game?retryWrites=true&w=majority", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false
+})
 
 app.listen(port, () => console.log(`Port sur écoute : ${port}`));
 
