@@ -13,12 +13,12 @@ const PlayerSchema = new mongoose.Schema({
   gameLost : {
     type : Number
   },
-  currentPlayerId : [
+  currentPlayerId : 
     {type: mongoose.Schema.Types.ObjectId,ref:'Game'}
-  ],
-  gameplayers: [
+  ,
+  gameplayers: 
     {type: mongoose.Schema.Types.ObjectId,ref:'GamePlayer'}
-  ],
+  ,
   // playerId: [
   //   {type: mongoose.Schema.Types.ObjectId,ref:'GameShot'}
   // ]

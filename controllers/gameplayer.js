@@ -6,6 +6,7 @@ const game = require("../routers/game")
 const mongoose = require('mongoose')
 
 const troiscentun = require('../engine/gamemodes/301')
+const around_the_world = require('../engine/gamemodes/around-the-world')
 
 const getAllPlayers = async(req, res) => {
     const allPlayers = await Player.find({}).populate({
@@ -28,7 +29,7 @@ const getAllPlayers = async(req, res) => {
         path: 'playerId',
         model: 'Player'
     })
-    console.log(game.gameplayers)
+    console.log(allPlayers)
     res.render('games/players.pug', {
         players: allPlayers,
         gameplayers: game.gameplayers,
@@ -41,7 +42,12 @@ const addGamePlayers = async(req, res) => {
     const gameplayer = new GamePlayer(select)
     await Player.findOneAndUpdate({_id: gameplayer.playerId}, {$set: {gameplayers: gameplayer}}, {new: true})
     gameplayer.gameId = req.params.id
-    gameplayer.score = troiscentun.score
+    const current_game = await Game.findById({_id: req.params.id})
+    if(current_game.mode === '301') {
+        gameplayer.score = troiscentun.score
+    } else if (current_game.mode === 'around-the-world') {
+        gameplayer.score = around_the_world.score
+    }
     gameplayer.remainingShots = troiscentun.nbDarts
     await gameplayer.save()
     troiscentun.startGame(req.params.id).then(async(response) => {

@@ -39,21 +39,21 @@ block content
                     th Email 
                     th Actions 
                 each player in players
-                    if player.gameplayers.length === 0
+                    if !player.gameplayers
                         tr(style="text-align: center") 
                                     td= player.name 
                                     td= player.email
                                     td
                                         input(type="checkbox", name="playerId" value=player._id)
-                    else if player.gameplayers.length
-                        each p in player.gameplayers
+                    else if player.gameplayers
+                        //- each p in player.gameplayers
                             //- - var id = p.name
-                            if p.gameId != game._id
-                                tr(style="text-align: center") 
-                                    td= p.gameId
-                                    td= p.playerId.email
-                                    td
-                                        input(type="checkbox", name="playerId" value=player._id)             
+                        if player.gameplayers.gameId != game._id
+                            tr(style="text-align: center") 
+                                td= player.name
+                                td= player.email
+                                td
+                                    input(type="checkbox", name="playerId" value=player._id)             
             input(type="submit" value="Ajouter")
 
     p

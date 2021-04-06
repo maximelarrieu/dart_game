@@ -10,7 +10,6 @@ const GameShot = require('../../models').GameShot
 // let player = new GamePlayer
 const GamePlayers = require("../../models/gameplayerschema")
 
-
 class trois_cent_un extends GameMode {
     constructor(name = "301", score = 301, nbDarts, nbPlayers) {
         super(),
