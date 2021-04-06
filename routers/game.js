@@ -193,17 +193,7 @@ module.exports = app => {
     })
 
     // Route qui supprime la partie en base de données
-    router.delete("/games/:id", jsonParser, urlencodedParser, function(req, res) {        
-        Game.destroy({
-            force: true,
-            where: {
-                id: req.params.id
-            }
-        })
-            .then(function () {
-                res.redirect(303, '/games')
-            });
-    })
+    router.delete("/games/:id", jsonParser, urlencodedParser, gamecontroller.deleteGame)
 
     // Page qui liste les joueurs et permet de les ajouter à une partie
 
@@ -285,38 +275,38 @@ module.exports = app => {
     // })
 
     // Supprime un joueur d'une partie en base de données
-    router.delete("/games/:id/players", jsonParser, urlencodedParser, function (req, res) {
-        for (let c in req.body.checked) {
-            GamePlayer.destroy({
-                force: true,
-                where: {
-                    playerId: req.body.checked[c]
-                }
-            })
-            .then(function() {
-                let counter = GamePlayer.count({where:{gameId: req.params.id}})
-                counter.then(function(result) {
-                    console.log(result)
-                    let test = encodeURIComponent(result)
-                    res.redirect(`/games/${req.params.id}/players?nbPlayers=${test}`)
-                })
-            })
-        }
-    })
+    // router.delete("/games/:id/players", jsonParser, urlencodedParser, function (req, res) {
+    //     for (let c in req.body.checked) {
+    //         GamePlayer.destroy({
+    //             force: true,
+    //             where: {
+    //                 playerId: req.body.checked[c]
+    //             }
+    //         })
+    //         .then(function() {
+    //             let counter = GamePlayer.count({where:{gameId: req.params.id}})
+    //             counter.then(function(result) {
+    //                 console.log(result)
+    //                 let test = encodeURIComponent(result)
+    //                 res.redirect(`/games/${req.params.id}/players?nbPlayers=${test}`)
+    //             })
+    //         })
+    //     }
+    // })
 
     // Créer un tir de joueur en base de données avec relation sur la partie
-    router.post("/games/:id/shots", jsonParser, urlencodedParser, function (req, res) {
-        // troiscentun.shot(req.params.id, req.body.shot, ).then(response => {
-            const id = req.params.id
-            Game.findByPk(id)
-            .then(function(gs) {
-                console.log(gs)
-                let player = gs.currentPlayerId
-                troiscentun.shot(req.params.id, req.body.shot, req.body.multiplicator, gs.currentPlayerId)
-                // troiscentun.randomize(gs.playerId)
-                res.redirect(`/games/${req.params.id}`)
-            })
-    })
+    // router.post("/games/:id/shots", jsonParser, urlencodedParser, function (req, res) {
+    //     // troiscentun.shot(req.params.id, req.body.shot, ).then(response => {
+    //         const id = req.params.id
+    //         Game.findByPk(id)
+    //         .then(function(gs) {
+    //             console.log(gs)
+    //             let player = gs.currentPlayerId
+    //             troiscentun.shot(req.params.id, req.body.shot, req.body.multiplicator, gs.currentPlayerId)
+    //             // troiscentun.randomize(gs.playerId)
+    //             res.redirect(`/games/${req.params.id}`)
+    //         })
+    // })
         // troiscentun.shot(req.params.id, req.body.shot, test
 
     //ROUTE FACULTATIVE

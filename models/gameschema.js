@@ -18,10 +18,10 @@ const GameSchema = new mongoose.Schema({
     required: true,
     lowercase: true
   },
-  gameplayers: [{type: Schema.Types.ObjectId, ref: 'GamePlayer'}]
-  // currentPlayerId : [
-  //   {type: mongoose.Schema.Types.ObjectId,ref:'Player'}
-  // ],
+  gameplayers: [], 
+  currentPlayerId : [
+    {type: mongoose.Schema.Types.ObjectId,ref:'Player'}
+  ],
   // gameId: [
   //   {type: mongoose.Schema.Types.ObjectId,ref:'GamePlayer'}
   // ],

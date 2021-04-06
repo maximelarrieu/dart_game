@@ -7,7 +7,7 @@ const GameShotSchema = new mongoose.Schema({
   sector : {
     type : Number
   },
-  PlayerId : [
+  playerId : [
     {type: mongoose.Schema.Types.ObjectId,ref:'Player'}
   ],
   gameId: [

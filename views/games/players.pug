@@ -1,15 +1,19 @@
 extends skeleton.pug 
 
 block content 
+
+    - var test = game._id
+
     h1 Liste des joueurs de la partie 
 
     p= game.name
+    p= test
 
     if players.length === 0
        p Pas de joueurs trouvés
     else
         p Participant(s)
-        form(action=`/games/${id}/players?_method=DELETE`, method="POST")
+        form(action=`/games/${game._id}/players?_method=DELETE`, method="POST")
             table(style="width:40%", border=2)
                 tr
                     th Nom 
@@ -19,12 +23,13 @@ block content
                     p Aucun joueur inscrit 
                 else
                     each player in gameplayers
-                        //- each p in player.playerId
-                        tr(style="text-align: center") 
-                            td= player.playerId.name
-                            td= player.playerId.email
-                            td
-                                input(type="checkbox", name="playerId" value=player.playerId.id)
+                        if gameplayers.length
+                            each p in gameplayers
+                                tr(style="text-align: center") 
+                                    td= p.playerId.name
+                                    td= p.playerId.email
+                                    td
+                                        input(type="checkbox", name="playerId" value=p.playerId._id)
             input(type="submit" value="Retirer")
         p Reste des joueurs
         form(action=`/games/${game._id}/players/`, method="POST")
@@ -34,11 +39,21 @@ block content
                     th Email 
                     th Actions 
                 each player in players
-                    tr(style="text-align: center") 
-                        td= player.name 
-                        td= player.email
-                        td
-                            input(type="checkbox", name="playerId" value=player.id)             
+                    if player.gameplayers.length === 0
+                        tr(style="text-align: center") 
+                                    td= player.name 
+                                    td= player.email
+                                    td
+                                        input(type="checkbox", name="playerId" value=player._id)
+                    else if player.gameplayers.length
+                        each p in player.gameplayers
+                            //- - var id = p.name
+                            if p.gameId != game._id
+                                tr(style="text-align: center") 
+                                    td= p.gameId
+                                    td= p.playerId.email
+                                    td
+                                        input(type="checkbox", name="playerId" value=player._id)             
             input(type="submit" value="Ajouter")
 
     p

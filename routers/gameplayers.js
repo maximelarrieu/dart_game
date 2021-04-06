@@ -25,5 +25,7 @@ module.exports = app => {
 
     router.post("/games/:id/players", jsonParser, urlencodedParser, gameplayerscontroller.addGamePlayers)
 
+    router.delete("/games/:id/players", jsonParser, urlencodedParser, gameplayerscontroller.deleteGamePlayers)
+
     app.use('/', router)
 }
