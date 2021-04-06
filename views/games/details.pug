@@ -28,16 +28,10 @@ block content
             else
                 each player in gameplayers
                     tr(style="text-align: center")
-                        td= player.Player.name
-                        td= player.Player.order 
+                        td= player.playerId.name
+                        td= player.playerId.order 
                         td= player.remainingShots
                         td= player.score
-                    //- each shot in g.GameShots
-                    //-     if shot.playerId === player.Player.id
-                    //-         td= score - shot.sector 
-                        //- else 
-                        //-     td= player.score
-
         form(action=`/games/${id}/edit`, method="GET")
             input(type="submit" value="Éditer")
         
@@ -60,8 +54,8 @@ block content
             if status == 'ended'
                 p= status
             else
-                if current_name != null
-                    p= current_name
+                if game.currentPlayerId != null
+                    p= game.currentPlayerId.name
                 else
                     p Aucun joueur n'a rejoint la partie
 

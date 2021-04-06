@@ -1,4 +1,8 @@
 const Game = require("../models/gameschema")
+const GamePlayer = require("../models/gameplayerschema")
+
+const GameMode = require('../engine/gamemode')
+const gamemode = new GameMode()
 
 const getGames = async(req, res) => {
     const games = await Game.find({})
@@ -9,16 +13,39 @@ const getGames = async(req, res) => {
 }
 
 const getGame = async(req, res) => {
-    const game = await Game.find({_id: req.params.id}).populate({
+    const game = await Game.findById({_id: req.params.id}).populate({
         path: 'gameplayers',
         model: 'GamePlayer',
-        populate: 'playerId',
-        model: 'Player'
+        populate: {
+            path: 'playerId',
+            model: 'Player'
+        }
+    }).populate({
+        path: 'currentPlayerId',
+        model: 'Player',
     })
-    console.log(game[0].gameplayers)
+
+    if (game.currentPlayerId) {
+        const gameplayer = await GamePlayer.findById({_id: game.currentPlayerId.gameplayers}).populate({
+            path: 'playerId',
+            model: 'Player'
+        })
+        if(gameplayer.remainingShots === 0) {
+            const gameplayer = await GamePlayer.findByIdAndUpdate({_id: game.currentPlayerId.gameplayers}, {$set: {remainingShots: gamemode.nbDarts}}).populate({
+                path: 'playerId',
+                model: 'Player'
+            })
+            const gameplayers = await GamePlayer.find({gameId: req.params.id})
+            gamemode.setOrder(gameplayers, JSON.stringify(game.currentPlayerId._id)).then(async(response) => {
+                const new_player = JSON.parse(response)
+                const game = await Game.findByIdAndUpdate(req.params.id, {currentPlayerId: new_player})
+            })
+        }
+    }
+    
     res.render('games/details.pug', {
-        game: game[0],
-        gameplayers: game[0].gameplayers
+        game: game,
+        gameplayers: game.gameplayers
     })
 }
 
