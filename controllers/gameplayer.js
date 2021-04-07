@@ -3,11 +3,9 @@ const Player = require("../models/playerschema")
 const Game = require("../models/gameschema")
 const game = require("../routers/game")
 
-const mongoose = require('mongoose')
-
 const troiscentun = require('../engine/gamemodes/301')
-const GameMode = require('../engine/gamemode')
 const around_the_world = require('../engine/gamemodes/around-the-world')
+const GameMode = require('../engine/gamemode')
 
 const gamemode = new GameMode()
 
@@ -45,10 +43,12 @@ const addGamePlayers = async(req, res) => {
         gameplayer.score = around_the_world.score
     }
     gameplayer.remainingShots = gamemode.nbDarts
+    gameplayer.inGame = true
     await gameplayer.save()
     const gameplayers = await GamePlayer.find({gameId: req.params.id})
     gamemode.startGame(gameplayers).then(async(response) => {
         const game = await Game.findByIdAndUpdate({_id: req.params.id}, {$set: {currentPlayerId: response}}, {new: true})
+        console.log(game)
         game.gameplayers.push(gameplayer._id)
         await game.save()
         res.redirect(`/games/${game._id}/players`)
@@ -56,14 +56,18 @@ const addGamePlayers = async(req, res) => {
 }
 
 const deleteGamePlayers = async(req, res) => {
-    const gameplayer = await GamePlayer.findByIdAndDelete(req.body)
-    const game = await Game.findOneAndUpdate({_id: req.params.id}, {$pullAll: gameplayer._id}, {new: true})
+    const gameplayer = await GamePlayer.findOneAndRemove({playerId: req.body.playerId})
+    const game = await Game.findById(req.params.id)
+    gameplayer.inGame = false
 
-    console.log(game)
+    let index = game.gameplayers.indexOf(gameplayer._id)
+    game.gameplayers.splice(index, 1)
+    await game.save()
+
     if (!gameplayer) {
         res.status(404).send("Aucun gameplayer trouvé.")
     }
-    res.status(200).send()
+
     res.redirect(`/games/${req.params.id}/players`)
 }
 

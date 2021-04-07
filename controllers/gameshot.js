@@ -5,9 +5,13 @@ const GamePlayer = require('../models/gameplayerschema')
 const troiscentun = require('../engine/gamemodes/301')
 const around_the_world = require('../engine/gamemodes/around-the-world')
 
+const GameMode = require('../engine/gamemode')
+const gamemode = new GameMode()
+
 const addGameShot = async(req, res) => {
     const gameshot = new GameShot(req.body)
     try {
+        await gameshot.save()
         const game = await Game.findById({_id: req.params.id}).populate({
             path: 'currentPlayerId',
             model: 'Player',
@@ -29,6 +33,29 @@ const addGameShot = async(req, res) => {
                     $set: {score: response.new_score, remainingShots: response.new_shots}
                 })
                 gameplayer.save()
+                troiscentun.checkScore(gameplayer, response.new_score).then(async(resp) => {
+                    if (resp === "0") {
+                        await GamePlayer.findById(gameplayer._id).populate({
+                            path: 'playerId',
+                            model: 'Player'
+                        })
+                        
+                        const gameplayers = await GamePlayer.find({gameId: gameplayer.gameId, inGame: true})
+                        gamemode.setOrder(gameplayers, JSON.stringify(gameplayer.playerId._id)).then(async(response) => {
+                            console.log("response")
+                            console.log(response)
+                            const new_player = JSON.parse(response)
+                            const game = await Game.findByIdAndUpdate(gameplayer.gameId, {currentPlayerId: new_player})
+                            game.save()
+                            gameplayer.inGame = false
+                            await gameplayer.save()
+                        })
+                    } else if (resp === "fail") {
+                        await GamePlayer.findByIdAndUpdate(gameplayer._id, {score: gameplayer.score})
+                        gameplayer.save()
+                    }
+                })
+                res.redirect(`/games/${req.params.id}`)
             })
         } else if (game.mode === "around-the-world") {
             around_the_world.ifNext(req.body.sector, gameplayer_score).then(async(response) => {
@@ -36,20 +63,41 @@ const addGameShot = async(req, res) => {
                     const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
                         $set: {score: gameplayer_score + 1, remainingShots: gameplayer_remainingShots - 1}
                     })
-                    await gameplayer.save()
+                    gameplayer.save()
+                    checkDarts(gameplayer)
+                    res.redirect(`/games/${req.params.id}`)
                 } else {
                     const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
                         $set: {remainingShots: gameplayer_remainingShots - 1}
                     })
-                    await gameplayer.save()                }
+                    await gameplayer.save()
+                    checkDarts(gameplayer)
+                    res.redirect(`/games/${req.params.id}`)
+                }
             })
-
         }
-        await gameshot.save()
-        res.redirect(`/games/${req.params.id}`)
     } catch(err) {
         res.status(500).send(err)
     }
 }
+
+const checkDarts = async (gameplayer) => {
+    console.log("verif")
+    console.log(gameplayer)
+    if((gameplayer.remainingShots - 1) === 0) {
+        console.log("true")
+        const reseted_gameplayer = await GamePlayer.findByIdAndUpdate({_id: gameplayer._id}, {$set: {remainingShots: gamemode.nbDarts}}).populate({
+            path: 'playerId',
+            model: 'Player'
+        })
+        reseted_gameplayer.save()
+        const gameplayers = await GamePlayer.find({gameId: gameplayer.gameId, inGame: true})
+        gamemode.setOrder(gameplayers, JSON.stringify(reseted_gameplayer.playerId._id)).then(async(response) => {
+            const new_player = JSON.parse(response)
+            const game = await Game.findByIdAndUpdate(gameplayer.gameId, {currentPlayerId: new_player})
+            game.save()
+        })
+    }
+} 
 
 exports.addGameShot = addGameShot

@@ -17,25 +17,7 @@ class trois_cent_un extends GameMode {
         this.score = score,
         this.randomize = this.randomize
     }
-    // Fonction d'initialisation d'une game lorsque un joueur est ajouté
-    // async startGame(id) {
-    //     const gameplayers = await GamePlayers.find({gameId: id})
-    //     let players = gameplayers.map((p) => p.playerId)
-    //     let players_id = players.map((p) => p._id)
-    //     let rand = Math.floor(Math.random() * players_id.length)
-    //     let current_player = players_id[rand]
-    //     return current_player
-    // }
-    async startGame(gameplayers) {
-        const ids = []
-        gameplayers.map((index) => {
-            console.log(index.playerId)
-            ids.push(index.playerId)
-        })
-        let rand = Math.floor(Math.random() * ids.length)
-        let current_player = ids[rand]
-        return current_player
-    }
+
     // Fonction shot (chaque joueur y passe 3x)
     async shot(sector, multiplicator, gameplayer) {
         // Récupération du score total du GamePlayer
@@ -46,38 +28,25 @@ class trois_cent_un extends GameMode {
         // Retourne les nouvelles valeurs
         const results = {new_score: new_score, new_shots: new_shots}
         return results
-                //         GamePlayer.findByPk(player)
-                //         .then((gp) => {
-                //             let score = gp.score
-                //             console.log("SCOOOOORE")
-                //             console.log(gp.score)
-                //             if (score == 0) {
-                //                 console.log("WIIIIIIIIIIIIIIIIIN!")
-                //                 GamePlayer.update({
-                //                     inGame: false                                },
-                //                 {
-                //                     where: {
-                //                         playerId: player
-                //                     }
-                //                 })
-                //                 .then(() => {
-                //                     trois_cent_un.randomize(gp.gameId, gp.id)
-                //                 })
-                //             } else if (score < 0) {
-                //                 console.log("COOOOOOOOOOOOOOOOOON")
-                //                 GamePlayer.update({
-                //                     score: score + (sector * multiplicator)
-                //                 },
-                //                 {
-                //                     where: {
-                //                         playerId: player
-                //                     }
-                //                 })
-                //             }
-                //         })
-                //     })
-                    
-                // })
+    }
+
+    async checkScore(gameplayer, score) {
+        if(score ===  0) {
+            return "0"
+        } else if (score < 0) {
+            return "fail"
+        }
+    }
+
+    async checkFinish(gameplayers) {
+        console.log(gameplayers)
+        gameplayers.map((index) => {
+            console.log(index.score)
+            if (index.score === 0) {
+                console.log("ok")
+                return "finished"
+            }
+        })
     }
 
     randomize(gameId, currentPlayerId) {

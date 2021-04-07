@@ -16,6 +16,8 @@ class GameMode {
         return current_player
     }
 
+    // Fonction de changement de joueur dans l'ordre
+    // Déduire l'ordre ici ?
     async setOrder(gameplayers, current) {
         const order = []
         gameplayers.map((index) => {
@@ -25,8 +27,10 @@ class GameMode {
         console.log(actual < order.length)
         if(actual >= 0 && actual < order.length) {
             const next = order[actual + 1]
+            console.log(next)
             if (next === undefined) {
                 const next = order[0]
+                console.log(next)
                 return next
             } else {
                 return next

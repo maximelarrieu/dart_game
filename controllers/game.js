@@ -1,8 +1,7 @@
 const Game = require("../models/gameschema")
 const GamePlayer = require("../models/gameplayerschema")
 
-const GameMode = require('../engine/gamemode')
-const gamemode = new GameMode()
+const troiscentun = require('../engine/gamemodes/301')
 
 const getGames = async(req, res) => {
     const games = await Game.find({})
@@ -25,23 +24,18 @@ const getGame = async(req, res) => {
         model: 'Player',
     })
 
-    if (game.currentPlayerId) {
-        const gameplayer = await GamePlayer.findById({_id: game.currentPlayerId.gameplayers}).populate({
-            path: 'playerId',
-            model: 'Player'
-        })
-        if(gameplayer.remainingShots === 0) {
-            const gameplayer = await GamePlayer.findByIdAndUpdate({_id: game.currentPlayerId.gameplayers}, {$set: {remainingShots: gamemode.nbDarts}}).populate({
-                path: 'playerId',
-                model: 'Player'
-            })
-            const gameplayers = await GamePlayer.find({gameId: req.params.id})
-            gamemode.setOrder(gameplayers, JSON.stringify(game.currentPlayerId._id)).then(async(response) => {
-                const new_player = JSON.parse(response)
-                await Game.findByIdAndUpdate(req.params.id, {currentPlayerId: new_player})
-            })
+    const gameplayers = await GamePlayer.find({gameId: game._id})
+    console.log(gameplayers)
+    troiscentun.checkFinish(gameplayers).then(async(response) => {
+        console.log("response")
+        console.log(response)
+        if (response === "finished") {
+            console.log('true')
+            game.status = 'ended'
+            await game.save()
         }
-    }
+    })
+
     
     res.render('games/details.pug', {
         game: game,
