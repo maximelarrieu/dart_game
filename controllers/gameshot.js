@@ -28,12 +28,11 @@ const addGameShot = async(req, res) => {
         const gameplayer_remainingShots = game.currentPlayerId.gameplayers.remainingShots
         if (game.mode === "301") {
             troiscentun.shot(req.body.sector, req.body.multiplicator, current_gameplayer).then(async(response) => {
-                console.log(response)
                 const gameplayer = await GamePlayer.findByIdAndUpdate(current_gameplayer._id, {
                     $set: {score: response.new_score, remainingShots: response.new_shots}
                 })
                 gameplayer.save()
-                troiscentun.checkScore(gameplayer, response.new_score).then(async(resp) => {
+                troiscentun.checkScore(response.new_score).then(async(resp) => {
                     if (resp === "0") {
                         await GamePlayer.findById(gameplayer._id).populate({
                             path: 'playerId',
@@ -42,8 +41,6 @@ const addGameShot = async(req, res) => {
                         
                         const gameplayers = await GamePlayer.find({gameId: gameplayer.gameId, inGame: true})
                         gamemode.setOrder(gameplayers, JSON.stringify(gameplayer.playerId._id)).then(async(response) => {
-                            console.log("response")
-                            console.log(response)
                             const new_player = JSON.parse(response)
                             const game = await Game.findByIdAndUpdate(gameplayer.gameId, {currentPlayerId: new_player})
                             game.save()
@@ -58,23 +55,42 @@ const addGameShot = async(req, res) => {
                 res.redirect(`/games/${req.params.id}`)
             })
         } else if (game.mode === "around-the-world") {
-            around_the_world.ifNext(req.body.sector, gameplayer_score).then(async(response) => {
-                if(response === true) {
-                    const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
-                        $set: {score: gameplayer_score + 1, remainingShots: gameplayer_remainingShots - 1}
-                    })
-                    gameplayer.save()
-                    checkDarts(gameplayer)
-                    res.redirect(`/games/${req.params.id}`)
-                } else {
-                    const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
-                        $set: {remainingShots: gameplayer_remainingShots - 1}
-                    })
-                    await gameplayer.save()
-                    checkDarts(gameplayer)
-                    res.redirect(`/games/${req.params.id}`)
-                }
-            })
+            if (gameplayer_score === 20) {
+                around_the_world.isLast(req.body.sector, gameplayer_score).then(async(response) => {
+                    if (response === true) {
+                        const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
+                            $set: {inGame: false}
+                        })
+                        await gameplayer.save()
+                        res.redirect(`/games/${req.params.id}`)
+                    } else {
+                        const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
+                            $set: {remainingShots: gameplayer_remainingShots - 1}
+                        })
+                        await gameplayer.save()
+                        checkDarts(gameplayer)
+                        res.redirect(`/games/${req.params.id}`)
+                    }
+                })
+            } else {
+                around_the_world.ifNext(req.body.sector, gameplayer_score).then(async(response) => {
+                    if(response === true) {
+                        const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
+                            $set: {score: gameplayer_score + 1, remainingShots: gameplayer_remainingShots - 1}
+                        })
+                        gameplayer.save()
+                        checkDarts(gameplayer)
+                        res.redirect(`/games/${req.params.id}`)
+                    } else {
+                        const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
+                            $set: {remainingShots: gameplayer_remainingShots - 1}
+                        })
+                        await gameplayer.save()
+                        checkDarts(gameplayer)
+                        res.redirect(`/games/${req.params.id}`)
+                    }
+                })
+            }
         }
     } catch(err) {
         res.status(500).send(err)
@@ -82,10 +98,7 @@ const addGameShot = async(req, res) => {
 }
 
 const checkDarts = async (gameplayer) => {
-    console.log("verif")
-    console.log(gameplayer)
     if((gameplayer.remainingShots - 1) === 0) {
-        console.log("true")
         const reseted_gameplayer = await GamePlayer.findByIdAndUpdate({_id: gameplayer._id}, {$set: {remainingShots: gamemode.nbDarts}}).populate({
             path: 'playerId',
             model: 'Player'

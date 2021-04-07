@@ -56,6 +56,7 @@ const addGamePlayers = async(req, res) => {
 
 const deleteGamePlayers = async(req, res) => {
     const gameplayer = await GamePlayer.findOneAndRemove({playerId: req.body.playerId})
+    console.log(gameplayer)
     const game = await Game.findById({_id: req.params.id}).populate({
         path: 'gameplayers',
         model: 'GamePlayer',
@@ -64,10 +65,11 @@ const deleteGamePlayers = async(req, res) => {
             model: 'Player'
         }
     })
-    gameplayer.inGame = false
 
     let index = game.gameplayers.indexOf(gameplayer._id)
+    console.log(gameplayer._id)
     game.gameplayers.splice(index, 1)
+    console.log(game.gameplayers)
     await game.save()
     gamemode.startGame(game.gameplayers).then(async(response) => {
         const game = await Game.findByIdAndUpdate({_id: req.params.id}, {$set: {currentPlayerId: response}}, {new: true})

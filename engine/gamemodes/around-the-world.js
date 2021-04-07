@@ -15,6 +15,15 @@ class around_the_world extends GameMode {
             return false
         }
     }
+
+    // Fonction de vérification, est ce que le dernier tir est celui attendu
+    async isLast(sector, player_score) {
+        if (sector == player_score + 5) {
+            return true
+        } else {
+            return false
+        }
+    }
 }
 
 module.exports = new around_the_world()

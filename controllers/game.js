@@ -24,13 +24,15 @@ const getGame = async(req, res) => {
         model: 'Player',
     })
 
-    console.log(game)
-
     const gameplayers = await GamePlayer.find({gameId: game._id})
     if (game.mode === "301") {
         troiscentun.checkFinish(gameplayers).then(async(response) => {
+            console.log(response === true)
             if (response === true) {
                 game.status = 'ended'
+                await game.save()
+            } else {
+                game.status = 'drafted'
                 await game.save()
             }
         })

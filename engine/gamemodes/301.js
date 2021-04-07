@@ -1,14 +1,5 @@
-const { request } = require('express')
-const { nbPlayers } = require('../gamemode')
 const GameMode = require('../gamemode')
 const GamePlayer = require('../../models').GamePlayer
-const Player = require('../../models').Player
-const Game = require('../../models').Game
-const GameShot = require('../../models').GameShot
-// const { sequelize } = require('../../models');
-// const sequelize = require('sequelize')
-// let player = new GamePlayer
-const GamePlayers = require("../../models/gameplayerschema")
 
 class trois_cent_un extends GameMode {
     constructor(name = "301", score = 301, nbDarts, nbPlayers) {
@@ -30,7 +21,7 @@ class trois_cent_un extends GameMode {
         return results
     }
 
-    async checkScore(gameplayer, score) {
+    async checkScore(score) {
         if(score ===  0) {
             return "0"
         } else if (score < 0) {
@@ -40,15 +31,17 @@ class trois_cent_un extends GameMode {
 
     async checkFinish(gameplayers) {
         const scores = []
-        gameplayers.map((index) => {
-            if (index.score === 0) {
+        if (gameplayers.length > 0) {
+            gameplayers.map((index) => {
                 scores.push(index.score)
-            }
-        })
-        const result = scores.every((score) => {
-            return score === 0
-        })
-        return result
+            })
+            console.log(scores)
+            const result = scores.every((score) => {
+                console.log(scores)
+                return score === 0
+            })
+            return result
+        }
     }
 
     randomize(gameId, currentPlayerId) {
