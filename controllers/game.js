@@ -38,7 +38,7 @@ const getGame = async(req, res) => {
             const gameplayers = await GamePlayer.find({gameId: req.params.id})
             gamemode.setOrder(gameplayers, JSON.stringify(game.currentPlayerId._id)).then(async(response) => {
                 const new_player = JSON.parse(response)
-                const game = await Game.findByIdAndUpdate(req.params.id, {currentPlayerId: new_player})
+                await Game.findByIdAndUpdate(req.params.id, {currentPlayerId: new_player})
             })
         }
     }
