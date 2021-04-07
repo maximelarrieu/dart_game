@@ -39,14 +39,16 @@ class trois_cent_un extends GameMode {
     }
 
     async checkFinish(gameplayers) {
-        console.log(gameplayers)
+        const scores = []
         gameplayers.map((index) => {
-            console.log(index.score)
             if (index.score === 0) {
-                console.log("ok")
-                return "finished"
+                scores.push(index.score)
             }
         })
+        const result = scores.every((score) => {
+            return score === 0
+        })
+        return result
     }
 
     randomize(gameId, currentPlayerId) {
@@ -68,45 +70,5 @@ class trois_cent_un extends GameMode {
             }
         })
     }
-    
-
-    // fucntion end
-    // endGame(winner) {
-    //     console.log(`${winner} a gagné !`)
-    // }
-    // ....
-    // checkDarts(current) {
-    //     GamePlayer.findAll({
-    //         where: {
-    //             gameId: id
-    //         }
-    //     })
-    //     })
-    //     .then((gp) => {
-    //         console.log("Tous les joueurs récupérés")
-    //         console.log(gp)
-    //         let all = gp.map((i) => i.playerId)
-    //         console.log(all)
-    //         let rand = Math.floor(Math.random() * all.length)
-    //         let new_current = all[rand]
-    //         Game.update(
-    //         {
-    //             currentPlayerId: new_current
-    //         },
-    //         {
-    //             where: {id: id}
-    //         },)
-    //         GamePlayer.update({
-    //             remainingShots: 3
-    //         },
-    //         {
-    //             where: {
-    //                 id: currentplayer,
-    //                 remainingShots: 0
-    //             }
-    //         })
-    //     })
-    // }
-    
 }
 module.exports = new trois_cent_un()

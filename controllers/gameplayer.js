@@ -48,7 +48,6 @@ const addGamePlayers = async(req, res) => {
     const gameplayers = await GamePlayer.find({gameId: req.params.id})
     gamemode.startGame(gameplayers).then(async(response) => {
         const game = await Game.findByIdAndUpdate({_id: req.params.id}, {$set: {currentPlayerId: response}}, {new: true})
-        console.log(game)
         game.gameplayers.push(gameplayer._id)
         await game.save()
         res.redirect(`/games/${game._id}/players`)
@@ -57,12 +56,23 @@ const addGamePlayers = async(req, res) => {
 
 const deleteGamePlayers = async(req, res) => {
     const gameplayer = await GamePlayer.findOneAndRemove({playerId: req.body.playerId})
-    const game = await Game.findById(req.params.id)
+    const game = await Game.findById({_id: req.params.id}).populate({
+        path: 'gameplayers',
+        model: 'GamePlayer',
+        populate: {
+            path: 'playerId',
+            model: 'Player'
+        }
+    })
     gameplayer.inGame = false
 
     let index = game.gameplayers.indexOf(gameplayer._id)
     game.gameplayers.splice(index, 1)
     await game.save()
+    gamemode.startGame(game.gameplayers).then(async(response) => {
+        const game = await Game.findByIdAndUpdate({_id: req.params.id}, {$set: {currentPlayerId: response}}, {new: true})
+        await game.save()
+    })
 
     if (!gameplayer) {
         res.status(404).send("Aucun gameplayer trouvé.")

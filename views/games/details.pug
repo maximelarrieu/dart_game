@@ -47,13 +47,13 @@ block content
             p Chaque joueur commence la partie avec 301 points. 
             p Chacun leur tour, les joueurs vont lancer trois fléchettes afin de baisser leur score.
             p Le premier joueur qui arrive exactement à zéro a gagné.
-
-            h4 A vous de jouer 
             
             if gameplayers.length >= 2
-                if status == 'ended'
-                    p= status
+                if game.status == 'ended'
+                    h3 La partie est terminée !
                 else
+                    h4 A vous de jouer 
+                    
                     if game.currentPlayerId != null
                         p= game.currentPlayerId.name
                     else

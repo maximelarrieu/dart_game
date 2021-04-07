@@ -24,18 +24,17 @@ const getGame = async(req, res) => {
         model: 'Player',
     })
 
-    const gameplayers = await GamePlayer.find({gameId: game._id})
-    console.log(gameplayers)
-    troiscentun.checkFinish(gameplayers).then(async(response) => {
-        console.log("response")
-        console.log(response)
-        if (response === "finished") {
-            console.log('true')
-            game.status = 'ended'
-            await game.save()
-        }
-    })
+    console.log(game)
 
+    const gameplayers = await GamePlayer.find({gameId: game._id})
+    if (game.mode === "301") {
+        troiscentun.checkFinish(gameplayers).then(async(response) => {
+            if (response === true) {
+                game.status = 'ended'
+                await game.save()
+            }
+        })
+    }
     
     res.render('games/details.pug', {
         game: game,

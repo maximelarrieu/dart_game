@@ -5,11 +5,15 @@ class GameMode {
         this.nbDarts = nbDarts
     }
 
-    // Fonction d'initialisation d'une game lorsque un joueur est ajouté
+    // Fonction d'initialisation d'une game lorsqu'un joueur est ajouté
     async startGame(gameplayers) {
         const ids = []
         gameplayers.map((index) => {
-            ids.push(index.playerId)
+            if(index.playerId) {
+                ids.push(index.playerId)
+            } else {
+                ids.push(index)
+            }
         })
         let rand = Math.floor(Math.random() * ids.length)
         let current_player = ids[rand]
