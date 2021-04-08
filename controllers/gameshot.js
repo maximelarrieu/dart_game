@@ -32,7 +32,8 @@ const addGameShot = async(req, res) => {
                     $set: {score: response.new_score, remainingShots: response.new_shots}
                 })
                 gameplayer.save()
-                troiscentun.checkScore(response.new_score).then(async(resp) => {
+                troiscentun.checkScore(response.new_score, req.body.multiplicator).then(async(resp) => {
+                    checkDarts(gameplayer)
                     if (resp === "0") {
                         await GamePlayer.findById(gameplayer._id).populate({
                             path: 'playerId',
@@ -40,6 +41,15 @@ const addGameShot = async(req, res) => {
                         })
                         
                         const gameplayers = await GamePlayer.find({gameId: gameplayer.gameId, inGame: true})
+                        troiscentun.checkFinish(gameplayers).then(async(response) => {
+                            if (response === true) {
+                                game.status = 'ended'
+                                game.save()
+                            } else {
+                                game.status = 'drafted'
+                                game.save()
+                            }    
+                        })
                         gamemode.setOrder(gameplayers, JSON.stringify(gameplayer.playerId._id)).then(async(response) => {
                             const new_player = JSON.parse(response)
                             const game = await Game.findByIdAndUpdate(gameplayer.gameId, {currentPlayerId: new_player})
@@ -49,7 +59,7 @@ const addGameShot = async(req, res) => {
                         })
                     } else if (resp === "fail") {
                         await GamePlayer.findByIdAndUpdate(gameplayer._id, {score: gameplayer.score})
-                        gameplayer.save()
+                        // gameplayer.save()
                     }
                 })
                 res.redirect(`/games/${req.params.id}`)
@@ -59,9 +69,27 @@ const addGameShot = async(req, res) => {
                 around_the_world.isLast(req.body.sector, gameplayer_score).then(async(response) => {
                     if (response === true) {
                         const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {
-                            $set: {inGame: false}
+                            $set: {inGame: false, score: 25}
                         })
                         await gameplayer.save()
+                        const gameplayers = await GamePlayer.find({gameId: gameplayer.gameId})
+                        around_the_world.checkFinish(gameplayers).then((response) => {
+                            if (response === true) {
+                                game.status = 'ended'
+                                game.save()
+                            } else {
+                                game.status = 'drafted'
+                                game.save()
+                            }
+                        })
+                        gamemode.setOrder(gameplayers, JSON.stringify(gameplayer.playerId._id)).then(async(response) => {
+                            console.log(response)
+                            const new_player = JSON.parse(response)
+                            const game = await Game.findByIdAndUpdate(gameplayer.gameId, {currentPlayerId: new_player})
+                            game.save()
+                            gameplayer.inGame = false
+                            await gameplayer.save()
+                        })
                         res.redirect(`/games/${req.params.id}`)
                     } else {
                         const gameplayer = await GamePlayer.findByIdAndUpdate(gameplayer_id, {

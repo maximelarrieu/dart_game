@@ -13,7 +13,6 @@ class trois_cent_un extends GameMode {
     async shot(sector, multiplicator, gameplayer) {
         // Récupération du score total du GamePlayer
         let new_score = gameplayer.score - (sector * multiplicator)
-        console.log(gameplayer.score)
         // Récupération du nombre de tirs restants au joueur
         let new_shots = gameplayer.remainingShots - 1
         // Retourne les nouvelles valeurs
@@ -21,10 +20,14 @@ class trois_cent_un extends GameMode {
         return results
     }
 
-    async checkScore(score) {
+    async checkScore(score, multiplicator) {
         if(score ===  0) {
-            return "0"
-        } else if (score < 0) {
+            if (multiplicator == 2) {
+                return "0"
+            } else {
+                return "fail"
+            }
+        } else if (score < 0 || score === 1) {
             return "fail"
         }
     }

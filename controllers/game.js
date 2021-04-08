@@ -30,10 +30,10 @@ const getGame = async(req, res) => {
             console.log(response === true)
             if (response === true) {
                 game.status = 'ended'
-                await game.save()
+                game.save()
             } else {
                 game.status = 'drafted'
-                await game.save()
+                game.save()
             }
         })
     }

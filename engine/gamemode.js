@@ -28,13 +28,10 @@ class GameMode {
             order.push(JSON.stringify(index.playerId))
         })
         const actual = order.indexOf(current)
-        console.log(actual < order.length)
         if(actual >= 0 && actual < order.length) {
             const next = order[actual + 1]
-            console.log(next)
             if (next === undefined) {
                 const next = order[0]
-                console.log(next)
                 return next
             } else {
                 return next

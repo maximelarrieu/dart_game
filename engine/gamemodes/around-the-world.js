@@ -24,6 +24,21 @@ class around_the_world extends GameMode {
             return false
         }
     }
+
+    async checkFinish(gameplayers) {
+        const scores = []
+        if (gameplayers.length > 0) {
+            gameplayers.map((index) => {
+                scores.push(index.score)
+            })
+            console.log(scores)
+            const result = scores.every((score) => {
+                console.log(scores)
+                return score === 25
+            })
+            return result
+        }
+    }
 }
 
 module.exports = new around_the_world()
