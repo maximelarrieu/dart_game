@@ -1,6 +1,8 @@
 const GameMode = require('../gamemode')
 
+// Classe du mode de jeu : Around the world
 class around_the_world extends GameMode {
+    // Constructor
     constructor(name = "around-the-world", score = 0, nbDarts, nbPlayers) {
         super(),
         this.name = name,
@@ -25,15 +27,14 @@ class around_the_world extends GameMode {
         }
     }
 
+    // Fonction de vérification, est ce que tous les joueurs ont 25 points ? -> Fin de la partie
     async checkFinish(gameplayers) {
         const scores = []
         if (gameplayers.length > 0) {
             gameplayers.map((index) => {
                 scores.push(index.score)
             })
-            console.log(scores)
             const result = scores.every((score) => {
-                console.log(scores)
                 return score === 25
             })
             return result

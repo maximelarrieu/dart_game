@@ -7,14 +7,14 @@ block content
     h1 Edition d'une partie
 
     form(action=`/games/${game.id}?_method=PATCH`, method="POST")
-        select(name="select" value=`${game.mode}`)
+        select(name="mode" value=`${game.mode}`)
             option(value="301") 301
-            option(value="test") test
+            option(value="around-the-world") Around the World
         p 
             | name: 
             input(type="text", required, name="name", value=`${game.name}`)
         select(name="status" value=`${game.status}`)
-            option(value="drafted") Brouillon
+            option(value="draft") Brouillon
             option(value="started") Démarée
         p
         input(type="submit" value="Editer")

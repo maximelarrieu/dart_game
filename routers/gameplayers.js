@@ -21,10 +21,13 @@ module.exports = app => {
         next();
     })
 
+    // Page qui liste tous les Players inscris 
     router.get("/games/:id/players", jsonParser, urlencodedParser, gameplayerscontroller.getAllPlayers)
 
+    // Route qui ajoute un GamePlayer à une Game
     router.post("/games/:id/players", jsonParser, urlencodedParser, gameplayerscontroller.addGamePlayers)
 
+    // Route qui supprime un GamePlayer d'une Game
     router.delete("/games/:id/players", jsonParser, urlencodedParser, gameplayerscontroller.deleteGamePlayers)
 
     app.use('/', router)

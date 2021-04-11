@@ -2,8 +2,6 @@
 const playercontroller = require("../controllers/player")
 const bodyParser = require('body-parser')
 
-const Player = require('../models').Player
-
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
