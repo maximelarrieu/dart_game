@@ -1,7 +1,7 @@
 // const createError = require('http-errors')
 
 // Récupération du model Game en base de données
-const Game = require("../models/gameschema")
+const Game = require("../models/game")
 
 // Fonction de récupéraiton de la liste de toutes les Games
 const getGames = async(req, res) => {

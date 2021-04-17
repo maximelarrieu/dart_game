@@ -1,5 +1,4 @@
 const GameMode = require('../gamemode')
-const GamePlayer = require('../../models').GamePlayer
 
 // Classe du mode de jeu : 301
 class trois_cent_un extends GameMode {

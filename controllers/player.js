@@ -1,5 +1,5 @@
 // Récupération du model Player en base de données
-const Player = require("../models/playerschema")
+const Player = require("../models/player")
 
 // Fonction de récupération de la liste de tous les Players
 const getPlayers = async(req, res) => {

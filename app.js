@@ -1,6 +1,7 @@
-const methodOverride = require('method-override');
+const express = require('express')
 const app = express();
-const port = 3667
+const methodOverride = require('method-override');
+const port = 3001
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose')
 

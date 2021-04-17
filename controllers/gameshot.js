@@ -1,9 +1,9 @@
 // Récupération du model GameShot en base de données
-const GameShot = require('../models/gameshotschema')
+const GameShot = require('../models/gameshot')
 // Récupération du model Game en base de données
-const Game = require('../models/gameschema')
+const Game = require('../models/game')
 // Récupération du model GamePlayer en base de données
-const GamePlayer = require('../models/gameplayerschema')
+const GamePlayer = require('../models/gameplayer')
 
 // Récupération de la classe troiscentun dans l'engine
 const troiscentun = require('../engine/gamemodes/301')
