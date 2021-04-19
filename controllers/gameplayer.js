@@ -47,14 +47,22 @@ const getAllPlayers = async(req, res) => {
 const addGamePlayers = async(req, res) => {
     // Récupération du Player selectionné dans la vue
     const select = req.body
-    // Création d'un nouveau GamePlayer
-    const gameplayer = new GamePlayer(select)
-    // Récupération du Player associé au GamePlayer créée
+    // Gérer le fait que plusieur joueurs soient séléctionnés
+    for (const property in select) {
+        console.log(`id des joueurs récupéré : ${select[property]}`)
+        // Création d'un Gameplayer par joueur
+        const gameplayer = new GamePlayer(select)
+        console.log(`id gameplayer : ${gameplayer}`)
+        return gameplayer
+    }
+
+    //Récupération du Player associé au GamePlayer créée
     await Player.findOneAndUpdate({_id: gameplayer.playerId}, {$set: {gameplayers: gameplayer}}, {new: true})
     // Initialisation de la gameId du nouveau GamePlayer
     gameplayer.gameId = req.params.id
     // Récupération de la Game
     const current_game = await Game.findById({_id: req.params.id})
+
     // Si le mode de jeu est 301
     if(current_game.mode === '301') {
         // Initialisation du score du GamePlayer (301)
