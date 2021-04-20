@@ -11,9 +11,7 @@ block content
     p= game.name
     p= test
 
-    if players.length === 0
-       p Pas de joueurs trouvés
-    else
+
         p Participant(s)
         form(action=`/games/${game._id}/players?_method=DELETE`, method="POST")
             table(style="width:40%", border=2)

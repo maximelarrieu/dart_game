@@ -74,6 +74,8 @@ block content
             if gameplayers.length >= 2
                 if game.status == 'ended'
                     h3 La partie est terminée !
+                else if game.status == 'draft'
+                    h3 La partie n'a pas encore commencé
                 else
                     h4 A vous de jouer 
                     

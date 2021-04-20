@@ -28,12 +28,12 @@ const getAllPlayers = async(req, res) => {
         }
     })
     // Récupération des Player inscris
-    const allPlayers = await Player.find({'gameplayers.gameId': {"$ne" : game._id}})
-    await Player.populate(allPlayers, {
+    const allPlayers = await Player.find({}).populate({
         // Récupèration des valeurs du model GamePlayer associé
         path: 'gameplayers',
         model: 'GamePlayer'
     })
+    console.log(allPlayers);
     // Retourne la vue dans laquelle s'afficheront les données
     res.render('games/players.pug', {
         // Valeurs à envoyer à la vue
@@ -47,22 +47,14 @@ const getAllPlayers = async(req, res) => {
 const addGamePlayers = async(req, res) => {
     // Récupération du Player selectionné dans la vue
     const select = req.body
-    // Gérer le fait que plusieur joueurs soient séléctionnés
-    for (const property in select) {
-        console.log(`id des joueurs récupéré : ${select[property]}`)
-        // Création d'un Gameplayer par joueur
-        const gameplayer = new GamePlayer(select)
-        console.log(`id gameplayer : ${gameplayer}`)
-        return gameplayer
-    }
-
-    //Récupération du Player associé au GamePlayer créée
+    // Création d'un nouveau GamePlayer
+    const gameplayer = new GamePlayer(select)
+    // Récupération du Player associé au GamePlayer créée
     await Player.findOneAndUpdate({_id: gameplayer.playerId}, {$set: {gameplayers: gameplayer}}, {new: true})
     // Initialisation de la gameId du nouveau GamePlayer
     gameplayer.gameId = req.params.id
     // Récupération de la Game
     const current_game = await Game.findById({_id: req.params.id})
-
     // Si le mode de jeu est 301
     if(current_game.mode === '301') {
         // Initialisation du score du GamePlayer (301)

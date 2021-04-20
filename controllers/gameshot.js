@@ -1,3 +1,6 @@
+// Récupération du client Redis
+const redisClient = require('../redis-client')
+const _ = require('lodash')
 // Récupération du model GameShot en base de données
 const GameShot = require('../models/gameshot')
 // Récupération du model Game en base de données
@@ -56,6 +59,12 @@ const addGameShot = async(req, res) => {
             gameplayer.score = response.new_score
             // Mis à jour du nombre de tirs du joueur par le nouveau nombre de tirs récupéré dans la response
             gameplayer.remainingShots = response.new_shots
+            // Redis
+            redisClient.zadd(`score_${game.name}`, gameplayer.score, gameplayer.playerId.name)
+            redisClient.zrange(`score_${game.name}`, 0, -1, 'withscores', function(err, members) {
+                let chunks = _.chunk(members, 2)
+                console.log(chunks)
+            })
             // Enregistrement en base de données
             gameplayer.save()
             // Lance la fonction checkDarts() pour vérifier si le joueur continue de joueur on si le prochain joue
